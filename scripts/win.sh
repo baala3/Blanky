@@ -9,7 +9,8 @@
 set -euo pipefail
 
 repo="$(cd "$(dirname "$0")/.." && pwd)"
-win_dir="${BLANKY_WIN_DIR:-/mnt/c/Users/$(cmd.exe /c 'echo %USERNAME%' 2>/dev/null | tr -d '\r')/.blanky-build/repo}"
+# %USERPROFILE%, not %USERNAME%: the profile folder's name can differ from the account name.
+win_dir="${BLANKY_WIN_DIR:-$(wslpath "$(cd /mnt/c && cmd.exe /c 'echo %USERPROFILE%' 2>/dev/null | tr -d '\r')")/.blanky-build/repo}"
 dotnet="dotnet.exe"
 
 sync() {

@@ -93,7 +93,10 @@ public sealed partial class MainWindow : Window
         }
         CenterOnScreen();
 
-        AppWindow.Closing += OnClosing;
+        // AppWindow.Closing covers the user closing the window; Closed covers Close()
+        // from code, which doesn't raise Closing.
+        AppWindow.Closing += (_, _) => ShutDownOnce();
+        Closed += (_, _) => ShutDownOnce();
         Root.SizeChanged += (_, _) => ScheduleDragRegionUpdate();
 
         // Title-bar buttons come and go (Back, Save as Preset); keep them clickable.
@@ -241,7 +244,7 @@ public sealed partial class MainWindow : Window
         }
         if (App.Current.CapturePath is { } path)
         {
-            // Scripted screenshots (scripts/screenshots.sh) can open a panel first.
+            // Scripted screenshots (scripts/screenshots.py) can open a panel first.
             if (App.Current.ArgValue("--demo-timer") is { } minutes)
             {
                 Audio.SleepTimer.Start(TimeSpan.FromMinutes(double.Parse(minutes, System.Globalization.CultureInfo.InvariantCulture)));
@@ -268,7 +271,7 @@ public sealed partial class MainWindow : Window
     // Clean up synchronously and let the window close normally; the app exits when
     // its last window does. (Cancelling and calling Exit from an async continuation
     // raced with XAML teardown and crashed.)
-    private void OnClosing(AppWindow sender, AppWindowClosingEventArgs args)
+    private void ShutDownOnce()
     {
         if (_closing)
         {

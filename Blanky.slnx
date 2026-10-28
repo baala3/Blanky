@@ -5,7 +5,12 @@
   </Configurations>
   <Folder Name="/src/">
     <Project Path="src/Blanky.Core/Blanky.Core.csproj" />
-    <Project Path="src/Blanky/Blanky.csproj" />
+    <Project Path="src/Blanky/Blanky.csproj">
+      <!-- Without this the app builds as AnyCPU into a different bin folder than
+           `dotnet build src/Blanky -p:Platform=x64`, leaving two copies to mix up. -->
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+    </Project>
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Blanky.Core.Tests/Blanky.Core.Tests.csproj" />
