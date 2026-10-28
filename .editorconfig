@@ -1,0 +1,19 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
+[*.{json,yml,yaml,xml,csproj,props,slnx,mjs,ts,tsx,astro,css,md}]
+indent_size = 2
+
+[*.cs]
+# Blanky is C# only; VB keyword clashes (e.g. a method named Stop) don't matter.
+dotnet_diagnostic.CA1716.severity = none
+# UI-thread code awaits on purpose to come back to the UI thread.
+dotnet_diagnostic.CA2007.severity = none
+csharp_style_namespace_declarations = file_scoped:warning

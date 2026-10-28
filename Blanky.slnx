@@ -1,0 +1,13 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="ARM64" />
+  </Configurations>
+  <Folder Name="/src/">
+    <Project Path="src/Blanky.Core/Blanky.Core.csproj" />
+    <Project Path="src/Blanky/Blanky.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Blanky.Core.Tests/Blanky.Core.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,96 @@
+<UserControl
+    x:Class="Blanky.Controls.SoundTile"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Blanky.Controls">
+
+    <Grid x:Name="Root" RowSpacing="10" Padding="4,8,4,4">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="SelectionStates">
+                <VisualState x:Name="Idle" />
+                <VisualState x:Name="Selected">
+                    <VisualState.Setters>
+                        <Setter Target="Disc.Opacity" Value="1" />
+                        <Setter Target="Ring.Opacity" Value="1" />
+                        <Setter Target="Glyph.Foreground" Value="{ThemeResource BlankyAccentBrush}" />
+                        <Setter Target="Glyph.Filled" Value="True" />
+                        <Setter Target="Volume.Foreground" Value="{ThemeResource BlankyAccentBrush}" />
+                        <Setter Target="TitleText.Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Button
+            x:Name="Disc_Button"
+            HorizontalAlignment="Center"
+            AutomationProperties.Name="{x:Bind Sound.Title, Mode=OneWay}"
+            Click="OnClick"
+            CornerRadius="60"
+            Style="{StaticResource PlainButtonStyle}">
+            <Grid x:Name="Face" Width="112" Height="112">
+                <Ellipse x:Name="Disc" Fill="{ThemeResource BlankyAccentSoftBrush}" Opacity="0" />
+                <controls:LoopRing
+                    x:Name="Ring"
+                    Foreground="{ThemeResource BlankyAccentBrush}"
+                    Opacity="0"
+                    Thickness="4"
+                    TrackBrush="{ThemeResource BlankyAccentGlowBrush}" />
+                <controls:SoundIcon
+                    x:Name="Glyph"
+                    Width="58"
+                    Height="58"
+                    Foreground="{ThemeResource BlankyIdleIconBrush}"
+                    Icon="{x:Bind Sound.Icon, Mode=OneWay}" />
+            </Grid>
+        </Button>
+
+        <StackPanel
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            Orientation="Horizontal"
+            Spacing="5">
+            <TextBlock
+                x:Name="TitleText"
+                MaxWidth="132"
+                FontSize="15"
+                FontWeight="SemiBold"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Text="{x:Bind Sound.Title, Mode=OneWay}"
+                TextTrimming="CharacterEllipsis" />
+            <Border
+                Width="16"
+                Height="16"
+                VerticalAlignment="Center"
+                BorderBrush="{ThemeResource TextFillColorTertiaryBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                ToolTipService.ToolTip="Music: plays one track at a time"
+                Visibility="{x:Bind Sound.IsMusic, Mode=OneWay}">
+                <controls:SoundIcon
+                    Width="10"
+                    Height="10"
+                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                    Icon="music_note_1" />
+            </Border>
+        </StackPanel>
+
+        <Slider
+            x:Name="Volume"
+            Grid.Row="2"
+            Width="124"
+            HorizontalAlignment="Center"
+            AutomationProperties.Name="Volume"
+            Foreground="{ThemeResource ControlStrongFillColorDisabledBrush}"
+            IsThumbToolTipEnabled="False"
+            Maximum="1"
+            Minimum="0"
+            StepFrequency="0.01"
+            Value="{x:Bind Sound.Volume, Mode=TwoWay}" />
+    </Grid>
+</UserControl>

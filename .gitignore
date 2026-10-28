@@ -1,0 +1,17 @@
+# Build output
+bin/
+obj/
+artifacts/
+
+# IDE and OS
+.vs/
+.vscode/
+*.user
+*.suo
+.DS_Store
+Thumbs.db
+
+# Website
+node_modules/
+website/dist/
+website/.astro/

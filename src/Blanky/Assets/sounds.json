@@ -1,0 +1,412 @@
+{
+  "sounds": [
+    {
+      "fileName": "rain",
+      "title": "Rain",
+      "subtitle": "Soft, steady rainfall",
+      "icon": "weather_rain",
+      "isMusic": false,
+      "duration": 92.2607,
+      "lufs": -29.31,
+      "normalizationFactor": 1.304723,
+      "credit": {
+        "soundName": "rain ambience",
+        "author": "alex36917",
+        "authorUrl": "https://freesound.org/people/alex36917/",
+        "sourceUrl": "https://freesound.org/s/524605/",
+        "license": "CC BY 4.0"
+      }
+    },
+    {
+      "fileName": "storm",
+      "title": "Storm",
+      "subtitle": "Deep, rolling thunder",
+      "icon": "weather_thunderstorm",
+      "isMusic": false,
+      "duration": 25.663,
+      "lufs": -17.803,
+      "normalizationFactor": 0.346875,
+      "credit": {
+        "soundName": "Infinite Storm.wav",
+        "author": "Digifish music",
+        "authorUrl": "https://freesound.org/people/digifishmusic/",
+        "sourceUrl": "https://freesound.org/s/41739",
+        "license": "CC BY 4.0"
+      }
+    },
+    {
+      "fileName": "wind",
+      "title": "Wind",
+      "subtitle": "Whistling, rushing gusts",
+      "icon": "weather_squalls",
+      "isMusic": false,
+      "duration": 211.1375,
+      "lufs": -17.74,
+      "normalizationFactor": 0.344332,
+      "credit": {
+        "soundName": "Wind blowing in a field in Texas, USA",
+        "author": "felix.blume",
+        "authorUrl": "https://freesound.org/people/felix.blume/",
+        "sourceUrl": "https://freesound.org/s/217506/",
+        "license": "CC0 1.0"
+      }
+    },
+    {
+      "fileName": "waves",
+      "title": "Waves",
+      "subtitle": "Surf rolling onto the shore",
+      "icon": "water",
+      "isMusic": false,
+      "duration": 115.4291,
+      "lufs": -23.027,
+      "normalizationFactor": 0.632894,
+      "credit": {
+        "soundName": "oceanwavescrushing.wav",
+        "author": "Luftrum",
+        "authorUrl": "https://freesound.org/people/Luftrum/",
+        "sourceUrl": "https://freesound.org/s/48412/",
+        "license": "CC BY 4.0"
+      }
+    },
+    {
+      "fileName": "stream",
+      "title": "Stream",
+      "subtitle": "Bubbling, trickling water",
+      "icon": "weather_humidity",
+      "isMusic": false,
+      "duration": 148.2864,
+      "lufs": -39.046,
+      "normalizationFactor": 4.002395,
+      "credit": {
+        "soundName": "stream2.wav",
+        "author": "gluckose",
+        "authorUrl": "https://freesound.org/people/gluckose/",
+        "sourceUrl": "https://freesound.org/s/333987/",
+        "license": "CC0 1.0"
+      }
+    },
+    {
+      "fileName": "birds",
+      "title": "Birds",
+      "subtitle": "Morning chirping in the trees",
+      "icon": "raven",
+      "isMusic": false,
+      "duration": 128.1011,
+      "lufs": -40.518,
+      "normalizationFactor": 4.741137,
+      "credit": {
+        "soundName": "WoodThrushinMorningShawneeForestMay272012.wav",
+        "author": "kvgarlic",
+        "authorUrl": "https://freesound.org/people/kvgarlic/",
+        "sourceUrl": "https://freesound.org/s/156826/",
+        "license": "CC0 1.0"
+      }
+    },
+    {
+      "fileName": "summer-night",
+      "title": "Summer Night",
+      "subtitle": "Crickets chirping in the dark",
+      "icon": "weather_moon",
+      "isMusic": false,
+      "duration": 46.8556,
+      "lufs": -14.196,
+      "normalizationFactor": 0.228986,
+      "credit": {
+        "soundName": "Crickets Chirping At Night",
+        "author": "Lisa Redfern",
+        "authorUrl": null,
+        "sourceUrl": "https://soundbible.com/2083-Crickets-Chirping-At-Night.html",
+        "license": "Public Domain"
+      }
+    },
+    {
+      "fileName": "train",
+      "title": "Train",
+      "subtitle": "Railcars pass on nearby tracks",
+      "icon": "vehicle_subway",
+      "isMusic": false,
+      "duration": 568.437,
+      "lufs": -24.693,
+      "normalizationFactor": 0.766761,
+      "credit": {
+        "soundName": "Trains of the Yamanote Line",
+        "author": "SDLx",
+        "authorUrl": "https://freesound.org/people/SDLx/",
+        "sourceUrl": "https://freesound.org/s/259988/",
+        "license": "CC BY 3.0"
+      }
+    },
+    {
+      "fileName": "boat",
+      "title": "Boat",
+      "subtitle": "Creaking ropes aboard a sailboat",
+      "icon": "vehicle_ship",
+      "isMusic": false,
+      "duration": 40.6028,
+      "lufs": -49.769,
+      "normalizationFactor": 7.943282,
+      "credit": {
+        "soundName": "Ambience_Sea_Boat_Night_Ropes_4.wav",
+        "author": "Falcet",
+        "authorUrl": "https://freesound.org/people/Falcet/",
+        "sourceUrl": "https://freesound.org/s/439365/",
+        "license": "CC0 1.0"
+      }
+    },
+    {
+      "fileName": "city",
+      "title": "City",
+      "subtitle": "Traffic on a busy street",
+      "icon": "city",
+      "isMusic": false,
+      "duration": 21.417,
+      "lufs": -38.04,
+      "normalizationFactor": 3.564349,
+      "credit": {
+        "soundName": "NYC_street leve02l.wav",
+        "author": "gezortenplotz",
+        "authorUrl": "https://freesound.org/people/gezortenplotz/",
+        "sourceUrl": "https://freesound.org/s/44796/",
+        "license": "CC BY 3.0"
+      }
+    },
+    {
+      "fileName": "coffee-shop",
+      "title": "Coffee Shop",
+      "subtitle": "Indistinct café chatter",
+      "icon": "drink_coffee",
+      "isMusic": false,
+      "duration": 12.8208,
+      "lufs": -22.562,
+      "normalizationFactor": 0.599902,
+      "credit": {
+        "soundName": "Restaurant Ambiance",
+        "author": "stephan",
+        "authorUrl": null,
+        "sourceUrl": "https://soundbible.com/1664-Restaurant-Ambiance.html",
+        "license": "Public Domain"
+      }
+    },
+    {
+      "fileName": "fireplace",
+      "title": "Fireplace",
+      "subtitle": "Crackling, popping logs",
+      "icon": "fireplace",
+      "isMusic": false,
+      "duration": 26.4969,
+      "lufs": -44.003,
+      "normalizationFactor": 7.081784,
+      "credit": {
+        "soundName": "Woodstove",
+        "author": "NPS & MSU Acoustic Atlas",
+        "authorUrl": null,
+        "sourceUrl": "https://www.nps.gov/media/video/view.htm?id=1E69FA23-BC88-460E-8EFD-8D3BA8B06C53",
+        "license": "Public Domain"
+      }
+    },
+    {
+      "fileName": "pink-noise",
+      "title": "Pink Noise",
+      "subtitle": "Softer, warmer static",
+      "icon": "pulse",
+      "isMusic": false,
+      "duration": 20.0,
+      "lufs": -27.187,
+      "normalizationFactor": 1.021722,
+      "credit": {
+        "soundName": "Pink Noise (Stereo)",
+        "author": "Blankie (Cody Bromley)",
+        "authorUrl": "https://blankie.rest",
+        "sourceUrl": "https://blankie.rest/credits",
+        "license": "CC0 1.0"
+      }
+    },
+    {
+      "fileName": "white-noise",
+      "title": "White Noise",
+      "subtitle": "Bright, steady static",
+      "icon": "graphic_eq",
+      "isMusic": false,
+      "duration": 19.75,
+      "lufs": -27.459,
+      "normalizationFactor": 1.054315,
+      "credit": {
+        "soundName": "White Noise (Stereo)",
+        "author": "Blankie (Cody Bromley)",
+        "authorUrl": "https://blankie.rest",
+        "sourceUrl": "https://blankie.rest/credits",
+        "license": "CC0 1.0"
+      }
+    },
+    {
+      "fileName": "brown-noise",
+      "title": "Brown Noise",
+      "subtitle": "Low and heavy brown noise",
+      "icon": "sound_wave_circle",
+      "isMusic": false,
+      "duration": 19.678,
+      "lufs": -27.2,
+      "normalizationFactor": 1.023239,
+      "credit": {
+        "soundName": "Brown Noise (Stereo)",
+        "author": "Blankie (Cody Bromley)",
+        "authorUrl": "https://blankie.rest",
+        "sourceUrl": "https://blankie.rest/credits",
+        "license": "CC0 1.0"
+      }
+    },
+    {
+      "fileName": "green-noise",
+      "title": "Green Noise",
+      "subtitle": "Calm, nature-like static",
+      "icon": "airwave",
+      "isMusic": false,
+      "duration": 8.971,
+      "lufs": -27.199,
+      "normalizationFactor": 1.02314,
+      "credit": {
+        "soundName": "Green Noise (Stereo)",
+        "author": "Blankie (Cody Bromley)",
+        "authorUrl": "https://blankie.rest",
+        "sourceUrl": "https://blankie.rest/credits",
+        "license": "CC0 1.0"
+      }
+    },
+    {
+      "fileName": "ambient-music",
+      "title": "Ambient Synth",
+      "subtitle": "Slow, dreamy electronic music",
+      "icon": "sine_wave_dots",
+      "isMusic": true,
+      "duration": 157.6076,
+      "lufs": -19.467,
+      "normalizationFactor": 0.42011,
+      "credit": {
+        "soundName": "Couple' Morning.wav",
+        "author": "ChristmasKrumble666",
+        "authorUrl": "https://freesound.org/people/ChristmasKrumble666/",
+        "sourceUrl": "https://freesound.org/s/742808/",
+        "license": "CC0 1.0"
+      }
+    },
+    {
+      "fileName": "acoustic-guitar",
+      "title": "Gentle Guitar",
+      "subtitle": "Warm, acoustic guitar",
+      "icon": "guitar",
+      "isMusic": true,
+      "duration": 124.041,
+      "lufs": -9.1,
+      "normalizationFactor": 0.127345,
+      "credit": {
+        "soundName": "acoustic guitar in open D",
+        "author": "yunclas",
+        "authorUrl": "https://freesound.org/people/yunclas/",
+        "sourceUrl": "https://freesound.org/s/653928/",
+        "license": "CC0 1.0"
+      }
+    },
+    {
+      "fileName": "fan",
+      "title": "Fan",
+      "subtitle": "A steady, whirring hum",
+      "icon": "mode_fan",
+      "isMusic": false,
+      "duration": 65.6364,
+      "lufs": -26.944,
+      "normalizationFactor": 0.993531,
+      "credit": {
+        "soundName": "Air Conditioner Fan Hum.wav",
+        "author": "LilMati",
+        "authorUrl": "https://freesound.org/people/LilMati/",
+        "sourceUrl": "https://freesound.org/s/515859/",
+        "license": "CC0 1.0"
+      }
+    },
+    {
+      "fileName": "lofi-beats",
+      "title": "Lo-Fi Beats",
+      "subtitle": "Mellow, chill hip-hop",
+      "icon": "music_note_2",
+      "isMusic": true,
+      "duration": 120.001,
+      "lufs": -16.672,
+      "normalizationFactor": 0.304523,
+      "credit": {
+        "soundName": "Laundry On The Wire",
+        "author": "Holizna",
+        "authorUrl": "https://freemusicarchive.org/music/holiznacc0/",
+        "sourceUrl": "https://freemusicarchive.org/music/holiznacc0/lazy-summer-lofi-1/laundry-on-the-wiremp3/",
+        "license": "CC0 1.0"
+      }
+    },
+    {
+      "fileName": "forest",
+      "title": "Forest",
+      "subtitle": "Steady breeze through the pines",
+      "icon": "tree_deciduous",
+      "isMusic": false,
+      "duration": 51.9358,
+      "lufs": -34.196,
+      "normalizationFactor": 2.289909,
+      "credit": {
+        "soundName": "Wind_pine.wav",
+        "author": "sinewave1kHz",
+        "authorUrl": "https://freesound.org/people/sinewave1kHz/",
+        "sourceUrl": "https://freesound.org/s/202989/",
+        "license": "CC0 1.0"
+      }
+    },
+    {
+      "fileName": "airplane",
+      "title": "Airplane",
+      "subtitle": "Mid-flight hum of an airplane cabin",
+      "icon": "airplane",
+      "isMusic": false,
+      "duration": 54.8408,
+      "lufs": -30.262,
+      "normalizationFactor": 1.455742,
+      "credit": {
+        "soundName": "Interior airplane.WAV",
+        "author": "ikbenraar",
+        "authorUrl": "https://freesound.org/people/ikbenraar/",
+        "sourceUrl": "https://freesound.org/s/133496/",
+        "license": "CC0 1.0"
+      }
+    },
+    {
+      "fileName": "laundry-room",
+      "title": "Laundry Room",
+      "subtitle": "A dryer tumbling clothes",
+      "icon": "washer",
+      "isMusic": false,
+      "duration": 31.8989,
+      "lufs": -25.118,
+      "normalizationFactor": 0.805203,
+      "credit": {
+        "soundName": "Laundry Room Ambience.wav",
+        "author": "moviebuffgavin",
+        "authorUrl": "https://freesound.org/people/moviebuffgavin/",
+        "sourceUrl": "https://freesound.org/s/411914/",
+        "license": "CC0 1.0"
+      }
+    },
+    {
+      "fileName": "warm-piano",
+      "title": "Warm Piano",
+      "subtitle": "A quiet, gentle lullaby",
+      "icon": "piano",
+      "isMusic": true,
+      "duration": 132.4138,
+      "lufs": -28.623,
+      "normalizationFactor": 1.205427,
+      "credit": {
+        "soundName": "Sleepy Upright Piano Seamless Loop",
+        "author": "Cody Bromley (for Blankie)",
+        "authorUrl": "https://blankie.rest",
+        "sourceUrl": "https://freesound.org/people/blankie.rest/sounds/859607/",
+        "license": "CC0 1.0"
+      }
+    }
+  ]
+}

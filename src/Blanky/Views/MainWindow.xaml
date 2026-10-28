@@ -1,0 +1,423 @@
+<Window
+    x:Class="Blanky.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Blanky.Controls"
+    xmlns:core="using:Blanky.Core.Playback"
+    xmlns:local="using:Blanky.Views">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <Grid x:Name="Root">
+        <Grid.Resources>
+            <DataTemplate x:Key="SidebarRowTemplate" x:DataType="local:SidebarRow">
+                <Button
+                    Padding="0"
+                    AutomationProperties.Name="{x:Bind Title}"
+                    Click="OnSidebarRowClick"
+                    RightTapped="OnSidebarRowRightTapped"
+                    Style="{StaticResource SidebarRowButtonStyle}"
+                    Tag="{x:Bind}">
+                    <Grid Padding="8,0,4,0" ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="32" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <!-- Active row: filled background plus the Windows navigation pill. -->
+                        <Border
+                            Grid.ColumnSpan="3"
+                            Margin="-8,0,-4,0"
+                            Background="{ThemeResource BlankySidebarActiveBrush}"
+                            CornerRadius="6"
+                            Visibility="{x:Bind IsActive, Mode=OneWay}" />
+                        <Rectangle
+                            Width="3"
+                            Height="16"
+                            Margin="-8,0,0,0"
+                            HorizontalAlignment="Left"
+                            Fill="{ThemeResource BlankyAccentBrush}"
+                            RadiusX="1.5"
+                            RadiusY="1.5"
+                            Visibility="{x:Bind IsActive, Mode=OneWay}" />
+
+                        <Border
+                            Width="32"
+                            Height="32"
+                            Background="{ThemeResource BlankyAccentSoftBrush}"
+                            CornerRadius="8">
+                            <Grid>
+                                <controls:SoundIcon
+                                    Width="18"
+                                    Height="18"
+                                    Filled="True"
+                                    Foreground="{ThemeResource BlankyAccentBrush}"
+                                    Icon="{x:Bind Icon}"
+                                    Visibility="{x:Bind IsSingleIcon}" />
+                                <Grid
+                                    Padding="5"
+                                    ColumnSpacing="2"
+                                    RowSpacing="2"
+                                    Visibility="{x:Bind IsMontage}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <controls:SoundIcon Filled="True" Foreground="{ThemeResource BlankyAccentBrush}" Icon="{x:Bind Icon}" />
+                                    <controls:SoundIcon Grid.Column="1" Filled="True" Foreground="{ThemeResource BlankyAccentBrush}" Icon="{x:Bind Icon2}" />
+                                    <controls:SoundIcon Grid.Row="1" Filled="True" Foreground="{ThemeResource BlankyAccentBrush}" Icon="{x:Bind Icon3}" />
+                                    <controls:SoundIcon Grid.Row="1" Grid.Column="1" Filled="True" Foreground="{ThemeResource BlankyAccentBrush}" Icon="{x:Bind Icon4}" />
+                                </Grid>
+                            </Grid>
+                        </Border>
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" Spacing="8">
+                            <TextBlock FontSize="14" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" />
+                            <controls:SoundIcon
+                                Width="14"
+                                Height="14"
+                                Foreground="{ThemeResource BlankyAccentBrush}"
+                                Icon="equalizer"
+                                Filled="True"
+                                Visibility="{x:Bind IsPlaying, Mode=OneWay}" />
+                        </StackPanel>
+
+                        <Button
+                            Grid.Column="2"
+                            Width="32"
+                            Height="32"
+                            AutomationProperties.Name="Favorite"
+                            Click="OnStarClick"
+                            CornerRadius="16"
+                            Style="{StaticResource PlainButtonStyle}"
+                            Tag="{x:Bind}"
+                            ToolTipService.ToolTip="Favorite">
+                            <Grid>
+                                <FontIcon
+                                    FontSize="15"
+                                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                    Glyph="&#xE734;"
+                                    Visibility="{x:Bind local:Ui.Not(IsStarred), Mode=OneWay}" />
+                                <FontIcon
+                                    FontSize="15"
+                                    Foreground="{ThemeResource BlankyAccentBrush}"
+                                    Glyph="&#xE735;"
+                                    Visibility="{x:Bind IsStarred, Mode=OneWay}" />
+                            </Grid>
+                        </Button>
+                    </Grid>
+                </Button>
+            </DataTemplate>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="SidebarColumn" Width="296" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Soft accent glow behind the mixer, like Blankie's tinted surface. -->
+        <Rectangle x:Name="Glow" Grid.ColumnSpan="2" IsHitTestVisible="False" />
+
+        <!-- ================= Sidebar ================= -->
+        <Grid
+            x:Name="SidebarPane"
+            Margin="8,8,0,8"
+            Background="{ThemeResource BlankySidebarBrush}"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid x:Name="SidebarHeader" Padding="14,0,6,0" ColumnSpacing="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel
+                    x:Name="SidebarTitle"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="10">
+                    <Border
+                        Width="22"
+                        Height="22"
+                        Background="{ThemeResource BlankyAccentBrush}"
+                        CornerRadius="6">
+                        <controls:SoundIcon
+                            Width="14"
+                            Height="14"
+                            Filled="True"
+                            Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
+                            Icon="sound_wave_circle" />
+                    </Border>
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Text="Blanky" />
+                </StackPanel>
+                <Button
+                    Grid.Column="1"
+                    AutomationProperties.Name="Add"
+                    Style="{StaticResource BarIconButtonStyle}"
+                    ToolTipService.ToolTip="New preset or import">
+                    <FontIcon FontSize="16" Glyph="&#xE710;" />
+                    <Button.Flyout>
+                        <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                            <MenuFlyoutItem Click="OnNewPreset" Text="New Preset…">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE8F4;" />
+                                </MenuFlyoutItem.Icon>
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="N" Modifiers="Control" />
+                                </MenuFlyoutItem.KeyboardAccelerators>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Click="OnImport" Text="Import Sound or Preset…">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE8B5;" />
+                                </MenuFlyoutItem.Icon>
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="I" Modifiers="Control" />
+                                </MenuFlyoutItem.KeyboardAccelerators>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Click="OnQuickMix" Text="Quick Mix">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE945;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+                <Button
+                    Grid.Column="2"
+                    AutomationProperties.Name="Hide sidebar"
+                    Click="OnToggleSidebar"
+                    Style="{StaticResource BarIconButtonStyle}"
+                    ToolTipService.ToolTip="Hide sidebar (Ctrl+S)">
+                    <FontIcon FontSize="16" Glyph="&#xE89F;" />
+                </Button>
+            </Grid>
+
+            <ScrollViewer Grid.Row="1" Padding="6,0,6,8">
+                <StackPanel>
+                    <ItemsRepeater
+                        Margin="0,4,0,0"
+                        ItemTemplate="{StaticResource SidebarRowTemplate}"
+                        ItemsSource="{x:Bind Sidebar.Pinned}" />
+                    <TextBlock
+                        x:Name="FavoritesHeader"
+                        Style="{StaticResource SectionHeaderStyle}"
+                        Text="Favorites" />
+                    <ItemsRepeater ItemTemplate="{StaticResource SidebarRowTemplate}" ItemsSource="{x:Bind Sidebar.Favorites}" />
+                    <TextBlock
+                        x:Name="PresetsHeader"
+                        Style="{StaticResource SectionHeaderStyle}"
+                        Text="Presets" />
+                    <ItemsRepeater ItemTemplate="{StaticResource SidebarRowTemplate}" ItemsSource="{x:Bind Sidebar.Presets}" />
+                    <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Sounds" />
+                    <ItemsRepeater ItemTemplate="{StaticResource SidebarRowTemplate}" ItemsSource="{x:Bind Sidebar.Sounds}" />
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- ================= Mixer ================= -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid x:Name="Header" Padding="16,0,0,0" ColumnSpacing="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition x:Name="CaptionSpace" Width="140" />
+                </Grid.ColumnDefinitions>
+                <Button
+                    x:Name="ShowSidebarButton"
+                    AutomationProperties.Name="Show sidebar"
+                    Click="OnToggleSidebar"
+                    Style="{StaticResource BarIconButtonStyle}"
+                    ToolTipService.ToolTip="Show sidebar (Ctrl+S)"
+                    Visibility="Collapsed">
+                    <FontIcon FontSize="16" Glyph="&#xE89F;" />
+                </Button>
+                <Button
+                    Grid.Column="1"
+                    AutomationProperties.Name="Back to preset"
+                    Click="OnBackToPreset"
+                    Style="{StaticResource BarIconButtonStyle}"
+                    ToolTipService.ToolTip="Back to your mix"
+                    Visibility="{x:Bind local:Ui.IsTransientMode(Audio.Mode), Mode=OneWay}">
+                    <FontIcon FontSize="16" Glyph="&#xE72B;" />
+                </Button>
+                <StackPanel
+                    Grid.Column="2"
+                    Margin="4,0,0,0"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="14">
+                    <TextBlock
+                        x:Name="TitleText"
+                        FontSize="20"
+                        FontWeight="SemiBold"
+                        Text="{x:Bind Audio.NowPlayingTitle, Mode=OneWay}"
+                        TextTrimming="CharacterEllipsis" />
+                    <!-- Empty mix: play has nothing to play, so say how to start (Blankie's "No Sounds Playing"). -->
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="Click a sound to start playing"
+                        Visibility="{x:Bind local:Ui.Not(Audio.HasSelectedSounds), Mode=OneWay}" />
+                </StackPanel>
+                <!-- On the all-sounds page, offer to keep the current mix as a preset. -->
+                <Button
+                    x:Name="SaveAsPresetButton"
+                    Grid.Column="3"
+                    Height="34"
+                    Padding="12,0"
+                    VerticalAlignment="Center"
+                    AutomationProperties.Name="Save as Preset"
+                    Click="OnNewPreset"
+                    Style="{StaticResource AccentButtonStyle}"
+                    ToolTipService.ToolTip="Save the selected sounds and their volumes as a preset (Ctrl+N)"
+                    Visibility="{x:Bind local:Ui.CanSaveAsPreset(Audio.Mode, Audio.CurrentPreset, Audio.HasSelectedSounds), Mode=OneWay}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="14" Glyph="&#xE74E;" />
+                        <TextBlock Text="Save as Preset" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <ScrollViewer Grid.Row="1" Padding="24,8,24,24">
+                <ItemsRepeater x:Name="SoundGrid" ItemsSource="{x:Bind Audio.VisibleSounds}">
+                    <ItemsRepeater.Layout>
+                        <UniformGridLayout
+                            ItemsJustification="Center"
+                            ItemsStretch="Uniform"
+                            MinColumnSpacing="8"
+                            MinItemHeight="210"
+                            MinItemWidth="160"
+                            MinRowSpacing="16" />
+                    </ItemsRepeater.Layout>
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="core:SoundItem">
+                            <controls:SoundTile Sound="{x:Bind}" />
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </ScrollViewer>
+
+            <!-- Bottom bar: volume, play/pause, timer, accent. -->
+            <Grid
+                Grid.Row="2"
+                Height="76"
+                Padding="20,0"
+                Background="{ThemeResource BlankyBarBrush}"
+                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                BorderThickness="0,1,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal" Spacing="10">
+                    <FontIcon
+                        FontSize="18"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Glyph="&#xE767;" />
+                    <Slider
+                        Width="170"
+                        AutomationProperties.Name="All sounds volume"
+                        IsThumbToolTipEnabled="False"
+                        Maximum="1"
+                        Minimum="0"
+                        StepFrequency="0.01"
+                        Value="{x:Bind Audio.Volume, Mode=TwoWay}" />
+                </StackPanel>
+
+                <Button
+                    x:Name="PlayButton"
+                    Grid.Column="1"
+                    Width="52"
+                    Height="52"
+                    AutomationProperties.Name="Play or pause"
+                    Background="{ThemeResource BlankyAccentBrush}"
+                    Click="OnPlayPause"
+                    CornerRadius="26"
+                    IsEnabled="{x:Bind Audio.HasSelectedSounds, Mode=OneWay}"
+                    Style="{StaticResource PlainButtonStyle}"
+                    ToolTipService.ToolTip="Play/Pause (Space)">
+                    <Grid>
+                        <FontIcon
+                            FontSize="20"
+                            Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
+                            Glyph="&#xE768;"
+                            Visibility="{x:Bind local:Ui.Not(Audio.IsPlaying), Mode=OneWay}" />
+                        <FontIcon
+                            FontSize="20"
+                            Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
+                            Glyph="&#xE769;"
+                            Visibility="{x:Bind Audio.IsPlaying, Mode=OneWay}" />
+                    </Grid>
+                </Button>
+
+                <StackPanel
+                    Grid.Column="2"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="6">
+                    <Button
+                        x:Name="TimerButton"
+                        MinWidth="40"
+                        Height="40"
+                        Padding="10,0"
+                        AutomationProperties.Name="Sleep timer"
+                        CornerRadius="20"
+                        Style="{StaticResource PlainButtonStyle}"
+                        ToolTipService.ToolTip="Sleep timer">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon x:Name="TimerIcon" FontSize="18" Glyph="&#xE916;" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource BlankyAccentBrush}"
+                                Text="{x:Bind local:Ui.Countdown(Audio.SleepTimer.Remaining), Mode=OneWay}"
+                                Visibility="{x:Bind Audio.SleepTimer.IsActive, Mode=OneWay}" />
+                        </StackPanel>
+                        <Button.Flyout>
+                            <Flyout x:Name="TimerFlyout" Opening="OnTimerFlyoutOpening" Placement="Top">
+                                <local:TimerPanel x:Name="TimerPanel" />
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                    <Button
+                        AutomationProperties.Name="Accent color"
+                        Style="{StaticResource BarIconButtonStyle}"
+                        ToolTipService.ToolTip="Accent color">
+                        <FontIcon FontSize="18" Glyph="&#xE790;" />
+                        <Button.Flyout>
+                            <Flyout x:Name="AccentFlyout" Placement="TopEdgeAlignedRight">
+                                <local:AccentPicker x:Name="AccentPicker" />
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
