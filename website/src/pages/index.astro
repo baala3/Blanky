@@ -14,7 +14,7 @@ const included = [
   { title: "Import your own audio", text: "Loudness-matched automatically so nothing ruins the mix" },
   { title: "Sleep timer", text: "Pauses your mix when it runs out" },
   { title: "Shareable presets", text: "Export mixes as files, and import presets from Blankie on Mac" },
-  { title: "100% offline and private", text: "No account, no analytics, no internet connection needed" },
+  { title: "Private and offline", text: "No account or analytics, and it works without an internet connection" },
   { title: "Accent colors and themes", text: "Per-preset accents, light and dark that follow Windows" },
   { title: "Every update, free", text: "No Pro tier, no upgrade screen, no unlocks to buy later" },
 ];
@@ -41,12 +41,14 @@ const others = [
         <p class="try">Try a few of Blanky's sounds right here. The app has all {soundCount}, plus any you import.</p>
       </div>
       <div class="cta">
-        <a class="button primary large" href={site.releases}>
+        <a class="button primary large" href={site.setupX64}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 19h16"></path></svg>
           Download for Windows
         </a>
         <p class="free-chip">All features 100% free. No ads or subscriptions.</p>
-        <p class="requirements">Windows 10 (version 2004 or later) or Windows 11 · x64 and Arm64</p>
+        <p class="requirements">
+          Windows 10 (version 2004 or later) or Windows 11 · <a href={site.setupArm64}>Arm64 version</a>
+        </p>
       </div>
     </div>
   </section>
@@ -163,11 +165,11 @@ const others = [
             }
           </ul>
           <div class="plan-foot">
-            <a class="button primary large" href={site.releases}>
+            <a class="button primary large" href={site.setupX64}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 19h16"></path></svg>
               Download for Windows
             </a>
-            <p>Free download from GitHub Releases. <a href={url("faq/#install")}>How to install</a></p>
+            <p>Installs in seconds and keeps itself up to date. <a href={url("faq/#install")}>How to install</a></p>
           </div>
         </div>
         <div class="glass plan theirs">
@@ -272,6 +274,12 @@ const others = [
     margin: 0;
     color: var(--fg-3);
     font-size: 14px;
+  }
+  .requirements a {
+    color: var(--fg-2);
+  }
+  .requirements a:hover {
+    color: var(--fg-1);
   }
 
   .section-title {

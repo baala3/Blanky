@@ -7,13 +7,13 @@ import { site } from "../site";
   <div class="container page">
     <header class="page-header">
       <h1 class="display">Privacy Policy</h1>
-      <p class="lede">Short version: Blanky collects nothing and never connects to the internet.</p>
+      <p class="lede">Short version: Blanky collects nothing. Its only connection is an update check with GitHub.</p>
     </header>
     <div class="prose">
       <h2>The app</h2>
       <p>
-        Blanky has no accounts, analytics, ads or crash reporting, and makes no network connections. Everything it stores
-        stays on your PC in <code>%LOCALAPPDATA%\Blanky</code>:
+        Blanky has no accounts, analytics, ads or crash reporting. Everything it stores stays on your PC in{" "}
+        <code>%LOCALAPPDATA%\Blanky</code>:
       </p>
       <ul>
         <li>your settings, presets and favorites (JSON files);</li>
@@ -21,6 +21,15 @@ import { site } from "../site";
         <li>a small log file, <code>blanky.log</code>, rewritten at each launch, that records audio device events to help fix bugs. It never leaves your PC unless you attach it to a bug report yourself.</li>
       </ul>
       <p>Deleting that folder removes everything Blanky has stored.</p>
+
+      <h2>Updates</h2>
+      <p>
+        When it starts and every few hours while it runs, Blanky asks GitHub whether a newer version has been released,
+        and if so downloads it from GitHub. These are ordinary web requests to GitHub's servers: they include your IP
+        address, as every web request does, and nothing about you or how you use Blanky. GitHub handles them under{" "}
+        <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement">its privacy statement</a>.
+      </p>
+      <p>The app itself is installed in <code>%LOCALAPPDATA%\Blanky.App</code>. Uninstalling removes it and leaves your data in place.</p>
 
       <h2>This website</h2>
       <p>

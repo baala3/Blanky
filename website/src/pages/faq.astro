@@ -17,18 +17,44 @@ import { site, url } from "../site";
 
       <h3 id="install">How do I install Blanky?</h3>
       <ol>
-        <li>Download the zip for your PC from the <a href={site.releases}>latest release</a> on GitHub (<code>x64</code> for most PCs, <code>arm64</code> for Snapdragon PCs).</li>
-        <li>Extract it somewhere permanent, for example <code>%LOCALAPPDATA%\Programs\Blanky</code>.</li>
-        <li>Open <code>Blanky.exe</code>. Pin it to Start or the taskbar to find it again.</li>
+        <li>
+          Download <a href={site.setupX64}>Blanky-Setup-x64.exe</a>. On a Snapdragon or other Arm64 PC, download{" "}
+          <a href={site.setupArm64}>Blanky-Setup-arm64.exe</a> instead.
+        </li>
+        <li>Run it. Blanky installs for your account in a few seconds, without asking for admin rights, and opens.</li>
       </ol>
+      <p>You'll find it in the Start menu and on your desktop.</p>
       <p>
-        Blanky isn't code-signed yet, so Windows SmartScreen may say it "protected your PC" the first time. Choose
+        Blanky isn't code-signed yet, so Windows SmartScreen may say it "protected your PC" the first time. Choose{" "}
         <strong>More info</strong>, then <strong>Run anyway</strong>. The code is open, and every release is built from
         the public repository by GitHub Actions.
       </p>
 
+      <h3 id="updates">How do I update Blanky?</h3>
+      <p>
+        You don't need to. Blanky checks GitHub for a new version when it starts and every few hours, and downloads it in
+        the background. A <strong>Restart to update</strong> button then appears at the top of the window. If you don't
+        click it, the update is installed the next time you close Blanky. Your presets and settings carry over.
+      </p>
+
+      <h3>How do I uninstall Blanky?</h3>
+      <p>
+        Open <strong>Settings &gt; Apps &gt; Installed apps</strong>, find Blanky and choose <strong>Uninstall</strong>.
+        Your presets, settings and imported sounds stay in <code>%LOCALAPPDATA%\Blanky</code> in case you reinstall;
+        delete that folder to remove them too.
+      </p>
+
+      <h3>I used the zip version of Blanky. How do I switch?</h3>
+      <p>
+        Run the installer as above. Your presets and settings are kept, since Blanky stores them separately from the app.
+        Then delete the folder you extracted the zip into.
+      </p>
+
       <h3>Does Blanky work offline?</h3>
-      <p>Yes. All sounds are bundled with the app and it never connects to the internet.</p>
+      <p>
+        Yes. All sounds are bundled with the app. The only thing Blanky does online is check for updates, and when you're
+        offline it simply tries again later.
+      </p>
 
       <h2 id="sounds">Sounds and presets</h2>
 
@@ -40,7 +66,7 @@ import { site, url } from "../site";
 
       <h3>Can I add my own sounds?</h3>
       <p>
-        Yes. Use the <strong>+</strong> button at the top of the sidebar, then <strong>Import Sound or Preset</strong>
+        Yes. Use the <strong>+</strong> button at the top of the sidebar, then <strong>Import Sound or Preset</strong>{" "}
         (<kbd>Ctrl</kbd>+<kbd>I</kbd>). Blanky imports M4A, MP3, WAV, FLAC, AAC and WMA (plus Ogg and Opus with Microsoft's free Web Media Extensions), and matches each import to the
         same loudness as the built-in sounds.
       </p>
@@ -84,7 +110,7 @@ import { site, url } from "../site";
 
       <h3>Is Blanky free?</h3>
       <p>
-        Yes, completely, with no ads, subscriptions or tracking. If you'd like to support it, you can
+        Yes, completely, with no ads, subscriptions or tracking. If you'd like to support it, you can{" "}
         <a href={site.buyMeACoffee}>buy me a coffee</a>, <a href={site.sponsors}>sponsor on GitHub</a> or star the
         <a href={site.repo}>repository</a>.
       </p>

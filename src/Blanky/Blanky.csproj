@@ -33,6 +33,8 @@
     <PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" />
     <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" />
     <PackageReference Include="NAudio.Wasapi" />
+    <!-- Installer and self-update; keep in step with the vpk version in publish.yml. -->
+    <PackageReference Include="Velopack" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Blanky.Core\Blanky.Core.csproj" />

@@ -1,6 +1,7 @@
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
+using Velopack;
 
 namespace Blanky;
 
@@ -9,6 +10,10 @@ public static class Program
     [STAThread]
     public static int Main(string[] args)
     {
+        // Must run first: handles the installer's install, update and uninstall hooks
+        // (which exit immediately) and applies an update downloaded last session.
+        VelopackApp.Build().Run();
+
         WinRT.ComWrappersSupport.InitializeComWrappers();
 
         // One Blanky per data folder: a second launch hands its activation to the

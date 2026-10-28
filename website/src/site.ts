@@ -5,6 +5,9 @@ export const site = {
     "Free, open-source ambient sound mixer for Windows. Mix rain, waves, fireplace, white noise and more to sleep, focus or relax.",
   repo: "https://github.com/baala3/Blanky",
   releases: "https://github.com/baala3/Blanky/releases/latest",
+  // Stable names, so these always fetch the newest installer.
+  setupX64: "https://github.com/baala3/Blanky/releases/latest/download/Blanky-Setup-x64.exe",
+  setupArm64: "https://github.com/baala3/Blanky/releases/latest/download/Blanky-Setup-arm64.exe",
   issues: "https://github.com/baala3/Blanky/issues/new",
   contributing: "https://github.com/baala3/Blanky/blob/main/CONTRIBUTING.md",
   buyMeACoffee: "https://buymeacoffee.com/baala3",

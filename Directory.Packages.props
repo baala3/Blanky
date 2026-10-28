@@ -11,6 +11,7 @@
     <PackageVersion Include="Microsoft.WindowsAppSDK.WinUI" Version="2.6.4" />
     <PackageVersion Include="NAudio.Core" Version="3.3.0" />
     <PackageVersion Include="NAudio.Wasapi" Version="3.3.0" />
+    <PackageVersion Include="Velopack" Version="1.2.161" />
     <PackageVersion Include="xunit.v3" Version="4.0.2" />
   </ItemGroup>
 </Project>
