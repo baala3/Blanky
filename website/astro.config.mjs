@@ -1,9 +1,8 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 
-// Served from GitHub Pages at https://baala3.github.io/Blanky/.
+// Served from GitHub Pages at the custom domain in public/CNAME.
 export default defineConfig({
-  site: "https://baala3.github.io",
-  base: "/Blanky",
+  site: "https://blanky.balashekhar.me",
   trailingSlash: "always",
 });

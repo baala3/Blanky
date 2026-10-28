@@ -15,5 +15,5 @@ export const site = {
   author: "Bala",
 };
 
-/** Prefixes a site path with the deploy base ("/Blanky/"). */
+/** Prefixes a site path with the deploy base ("/"). */
 export const url = (path = "") => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;

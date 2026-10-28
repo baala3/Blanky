@@ -13,7 +13,7 @@ Ambient sound mixer for Windows
   <a href="https://github.com/baala3/Blanky/actions/workflows/ci.yml"><img src="https://github.com/baala3/Blanky/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 </p>
 
-<p><a href="https://github.com/baala3/Blanky/releases/latest"><b>Download for Windows</b></a> · <a href="https://baala3.github.io/Blanky/">Website</a> · <a href="https://baala3.github.io/Blanky/faq/">FAQ</a></p>
+<p><a href="https://github.com/baala3/Blanky/releases/latest"><b>Download for Windows</b></a> · <a href="https://blanky.balashekhar.me/">Website</a> · <a href="https://blanky.balashekhar.me/faq/">FAQ</a></p>
 
 <img src="docs/screenshot.png" alt="Blanky's main window with Rain, Waves, Fan and Warm Piano playing" width="900">
 </div>
@@ -65,7 +65,7 @@ Working from WSL? `scripts/win.sh build | test | run` mirrors the repo to the Wi
 | `src/Blanky.Core` | Audio engine, playback rules, presets and storage. Platform-free and unit tested. |
 | `src/Blanky` | The WinUI 3 app: windows, controls, Media Foundation decoding and WASAPI output. |
 | `tests/Blanky.Core.Tests` | xUnit tests for the core. |
-| `website` | The [website](https://baala3.github.io/Blanky/), built with Astro. |
+| `website` | The [website](https://blanky.balashekhar.me/), built with Astro. |
 | `scripts` | Icon generation, screenshots and WSL helpers. |
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for more.

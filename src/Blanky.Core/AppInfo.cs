@@ -10,7 +10,7 @@ public static class AppInfo
     public const string Tagline = "Ambient sound mixer for Windows";
     public const string AppUserModelId = "Blanky.App";
 
-    public const string WebsiteUrl = "https://baala3.github.io/Blanky/";
+    public const string WebsiteUrl = "https://blanky.balashekhar.me/";
     public const string RepositoryUrl = "https://github.com/baala3/Blanky";
     public const string IssuesUrl = RepositoryUrl + "/issues";
     public const string ReleasesUrl = RepositoryUrl + "/releases";
