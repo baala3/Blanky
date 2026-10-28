@@ -25,7 +25,9 @@ env:
 
 jobs:
   publish:
-    # Each architecture builds and tests on its own hardware.
+    # Each architecture builds and tests on its own hardware. The name is fixed
+    # because branch protection requires these checks by name.
+    name: Package (${{ matrix.rid }})
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 40
     strategy:
