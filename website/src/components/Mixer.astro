@@ -1,12 +1,14 @@
 ---
-// A playable copy of Blanky's mixer for the hero. Same sounds, presets, volume
-// curve and loudness matching as the app, played through Web Audio.
+// A playable sample of Blanky's mixer for the hero: a handful of the app's sounds
+// and its demo presets, with the same volume curve and loudness matching, played
+// through Web Audio. A link in the bottom bar points to the rest in the app.
 import Icon from "./Icon.astro";
 import { url } from "../site";
 import catalog from "../../../src/Blanky/Assets/sounds.json";
-import { presets, accents } from "./mixer-data";
+import { presets, accents, demoSounds } from "./mixer-data";
 
-const sounds = catalog.sounds;
+const sounds = catalog.sounds.filter((s) => demoSounds.includes(s.fileName));
+const more = catalog.sounds.length - sounds.length;
 ---
 
 <div class="mixer" data-base={url("sounds/")} style={`--acc: ${accents.blue}`}>
@@ -17,7 +19,7 @@ const sounds = catalog.sounds;
     </div>
     <button class="preset active" data-preset="all" style={`--acc: ${accents.blue}`}>
       <span class="badge"><img src={url("logo.png")} alt="" width="20" height="20" /></span>
-      <span class="label">All Blanky Sounds</span>
+      <span class="label">Sound Sampler</span>
     </button>
     <p class="group">Presets</p>
     {
@@ -34,7 +36,7 @@ const sounds = catalog.sounds;
 
   <div class="main">
     <header class="top">
-      <h3 class="title">All Blanky Sounds</h3>
+      <h3 class="title">Sound Sampler</h3>
       <span class="hint">Tap a sound to play it</span>
     </header>
 
@@ -73,14 +75,17 @@ const sounds = catalog.sounds;
         <svg class="icon-play" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.6v12.8c0 .8.9 1.3 1.6.9l10-6.4c.6-.4.6-1.3 0-1.7l-10-6.4C8.9 4.3 8 4.8 8 5.6Z"></path></svg>
         <svg class="icon-pause" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.5" fill="currentColor"></rect><rect x="14" y="5" width="4" height="14" rx="1.5" fill="currentColor"></rect></svg>
       </button>
-      <span class="spacer"></span>
+      <a class="more" href={url("#download")}>
+        <span><strong>+{more}</strong> <span class="more-long">more sounds </span>in the app</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg>
+      </a>
     </footer>
   </div>
 </div>
 
 <script>
   import catalog from "../../../src/Blanky/Assets/sounds.json";
-  import { presets, accents, type MixState } from "./mixer-data";
+  import { presets, accents, demoSounds, type MixState } from "./mixer-data";
 
   // Mirrors Blanky.Core: cubic slider curve, loudness correction capped at +24 dB,
   // half-second fades and a -1 dBFS peak limiter on the master bus.
@@ -105,7 +110,9 @@ const sounds = catalog.sounds;
 
   const root = document.querySelector<HTMLElement>(".mixer")!;
   const base = root.dataset.base!;
-  const sounds = new Map<string, Sound>(catalog.sounds.map((s) => [s.fileName, s]));
+  const sounds = new Map<string, Sound>(
+    catalog.sounds.filter((s) => demoSounds.includes(s.fileName)).map((s) => [s.fileName, s]),
+  );
   const tiles = new Map<string, HTMLElement>(
     [...root.querySelectorAll<HTMLElement>(".tile")].map((t) => [t.dataset.sound!, t]),
   );
@@ -116,7 +123,7 @@ const sounds = catalog.sounds;
 
   // Each preset keeps its own mix, like the app. "all" starts with the screenshot's mix.
   const mixes = new Map<string, MixState>([
-    ["all", { accent: "blue", name: "All Blanky Sounds", sounds: { rain: 0.62, waves: 0.5 } }],
+    ["all", { accent: "blue", name: "Sound Sampler", sounds: { rain: 0.62, waves: 0.5 } }],
     ...presets.map((p): [string, MixState] => [p.id, { accent: p.accent, name: p.name, sounds: { ...p.sounds } }]),
   ]);
   const volumes = new Map<string, number>([...sounds.keys()].map((k) => [k, DEFAULT_VOLUME]));
@@ -316,8 +323,6 @@ const sounds = catalog.sounds;
     z-index: 1;
     display: grid;
     grid-template-columns: 236px minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr);
-    height: 740px;
     text-align: left;
     color: #f3f4f6;
     background: linear-gradient(160deg, #222a36 0%, #1e2531 45%, #29262a 100%);
@@ -457,13 +462,9 @@ const sounds = catalog.sounds;
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px 4px;
     padding: 12px 20px 24px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-    mask-image: linear-gradient(to bottom, transparent, black 12px, black calc(100% - 24px), transparent);
   }
 
   .tile {
@@ -643,6 +644,29 @@ const sounds = catalog.sounds;
     width: 150px;
     min-width: 0;
   }
+  .more {
+    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--text-2);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+  .more strong {
+    color: var(--acc);
+  }
+  .more:hover {
+    color: white;
+  }
+  .more svg {
+    transition: transform 0.15s var(--ease);
+  }
+  .more:hover svg {
+    transform: translateX(2px);
+  }
   .play {
     display: grid;
     place-items: center;
@@ -673,8 +697,6 @@ const sounds = catalog.sounds;
   @media (max-width: 760px) {
     .mixer {
       grid-template-columns: 1fr;
-      grid-template-rows: auto minmax(0, 1fr);
-      height: 600px;
     }
     .sidebar {
       flex-direction: row;
@@ -723,22 +745,34 @@ const sounds = catalog.sounds;
       font-size: 17px;
     }
     .grid {
-      grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
-      padding: 10px 8px 20px;
+      gap: 8px 2px;
+      padding: 10px 8px 16px;
+    }
+    .tile {
+      gap: 6px;
     }
     .face {
-      width: 76px;
-      height: 76px;
+      width: 64px;
+      height: 64px;
     }
     .face :global(svg.glyph) {
-      width: 36px;
-      height: 36px;
+      width: 30px;
+      height: 30px;
     }
     .name {
+      font-size: 12px;
+    }
+    .music {
+      display: none;
+    }
+    .tile input[type="range"] {
+      width: min(76px, 100%);
+    }
+    .more {
       font-size: 13px;
     }
-    input[type="range"] {
-      width: 92px;
+    .more-long {
+      display: none;
     }
     .bar {
       padding: 10px 16px;

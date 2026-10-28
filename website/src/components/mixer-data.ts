@@ -1,5 +1,6 @@
-// Demo presets for the hero mixer. Same mixes as scripts/screenshots.py, so the
-// site plays what its screenshots show.
+// Demo presets for the hero mixer. The mixes from scripts/screenshots.py, except
+// Ocean Focus swaps Green Noise for Brown Noise to keep the sampler at 8 sounds.
+// The site only ships the sounds these use; the rest are a reason to download the app.
 
 /** Dark-theme accents from src/Blanky.Core/Model/AccentColors.cs. */
 export const accents = {
@@ -21,5 +22,8 @@ export interface MixState {
 export const presets: (MixState & { id: string; icon: string })[] = [
   { id: "heavy-rain", name: "Heavy Rain Sleep", icon: "weather_rain", accent: "indigo", sounds: { rain: 0.75, "brown-noise": 0.5, fan: 0.4 } },
   { id: "cozy-night", name: "Cozy Night In", icon: "fire", accent: "orange", sounds: { fireplace: 0.7, wind: 0.45, "warm-piano": 0.55 } },
-  { id: "ocean-focus", name: "Ocean Focus", icon: "water", accent: "teal", sounds: { "green-noise": 0.5, waves: 0.7, "lofi-beats": 0.45 } },
+  { id: "ocean-focus", name: "Ocean Focus", icon: "water", accent: "teal", sounds: { waves: 0.7, "brown-noise": 0.4, "lofi-beats": 0.45 } },
 ];
+
+/** The sounds the website ships and plays: those the demo presets use. */
+export const demoSounds: string[] = [...new Set(presets.flatMap((p) => Object.keys(p.sounds)))];
