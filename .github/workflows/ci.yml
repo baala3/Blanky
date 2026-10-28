@@ -27,6 +27,11 @@ jobs:
           dotnet build tests/Blanky.Core.Tests -c Release -nologo
           ./tests/Blanky.Core.Tests/bin/Release/net10.0/Blanky.Core.Tests.exe
 
+  publish:
+    uses: ./.github/workflows/publish.yml
+    with:
+      name: ci-${{ github.sha }}
+
   website:
     runs-on: ubuntu-latest
     timeout-minutes: 15

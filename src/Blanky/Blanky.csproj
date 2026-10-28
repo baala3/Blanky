@@ -13,6 +13,9 @@
     <!-- Required for dotnet publish to include Blanky.pri (compiled XAML) in an unpackaged app. -->
     <EnableMsixTooling>true</EnableMsixTooling>
     <SelfContained>true</SelfContained>
+    <!-- Compiles to one native exe: no JIT or IL runtime on disk, faster startup and a
+         much smaller download. Also turns on the trim and AOT analyzers for every build. -->
+    <PublishAot>true</PublishAot>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\Blanky.ico</ApplicationIcon>

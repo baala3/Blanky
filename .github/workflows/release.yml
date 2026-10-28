@@ -10,36 +10,10 @@ permissions:
 
 jobs:
   publish:
-    runs-on: windows-latest
-    timeout-minutes: 40
-    strategy:
-      matrix:
-        include:
-          - platform: x64
-            rid: win-x64
-          - platform: ARM64
-            rid: win-arm64
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-dotnet@v6
-        with:
-          global-json-file: global.json
-
-      - name: Publish
-        shell: pwsh
-        run: |
-          $version = "${{ github.ref_name }}".TrimStart("v")
-          dotnet publish src/Blanky/Blanky.csproj -c Release -p:Platform=${{ matrix.platform }} -r ${{ matrix.rid }} -p:Version=$version -o publish -nologo
-          if (-not (Test-Path publish/Blanky.pri)) { throw "Blanky.pri missing from publish output" }
-
-      - name: Zip
-        shell: pwsh
-        run: Compress-Archive -Path publish/* -DestinationPath "Blanky-${{ github.ref_name }}-${{ matrix.rid }}.zip"
-
-      - uses: actions/upload-artifact@v7
-        with:
-          name: Blanky-${{ matrix.rid }}
-          path: Blanky-*.zip
+    uses: ./.github/workflows/publish.yml
+    with:
+      version: ${{ github.ref_name }}
+      name: ${{ github.ref_name }}
 
   release:
     needs: publish
@@ -47,6 +21,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v8
         with:
+          pattern: Blanky-win-*
           merge-multiple: true
       - uses: softprops/action-gh-release@v3
         with:
