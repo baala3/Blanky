@@ -7,6 +7,7 @@ on:
       - "website/**"
       - "src/Blanky/Assets/sounds.json"
       - "src/Blanky/Assets/icons.json"
+      - "src/Blanky/Assets/Sounds/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 

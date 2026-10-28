@@ -1,0 +1,758 @@
+---
+// A playable copy of Blanky's mixer for the hero. Same sounds, presets, volume
+// curve and loudness matching as the app, played through Web Audio.
+import Icon from "./Icon.astro";
+import { url } from "../site";
+import catalog from "../../../src/Blanky/Assets/sounds.json";
+import { presets, accents } from "./mixer-data";
+
+const sounds = catalog.sounds;
+---
+
+<div class="mixer" data-base={url("sounds/")} style={`--acc: ${accents.blue}`}>
+  <aside class="sidebar" aria-label="Presets">
+    <div class="brand">
+      <img src={url("logo.png")} alt="" width="22" height="22" />
+      <span>Blanky</span>
+    </div>
+    <button class="preset active" data-preset="all" style={`--acc: ${accents.blue}`}>
+      <span class="badge"><img src={url("logo.png")} alt="" width="20" height="20" /></span>
+      <span class="label">All Blanky Sounds</span>
+    </button>
+    <p class="group">Presets</p>
+    {
+      presets.map((preset) => (
+        <button class="preset" data-preset={preset.id} style={`--acc: ${accents[preset.accent]}`}>
+          <span class="badge">
+            <Icon name={preset.icon} size={16} filled />
+          </span>
+          <span class="label">{preset.name}</span>
+        </button>
+      ))
+    }
+  </aside>
+
+  <div class="main">
+    <header class="top">
+      <h3 class="title">All Blanky Sounds</h3>
+      <span class="hint">Tap a sound to play it</span>
+    </header>
+
+    <div class="grid">
+      {
+        sounds.map((sound) => (
+          <div class="tile" data-sound={sound.fileName}>
+            <button class="face" aria-pressed="false" aria-label={sound.title}>
+              <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
+                <circle class="track" cx="50" cy="50" r="48" />
+                <circle class="arc" cx="50" cy="50" r="48" pathLength="1" />
+              </svg>
+              <Icon name={sound.icon} size={44} class="glyph regular" />
+              <Icon name={sound.icon} size={44} class="glyph filled" filled />
+            </button>
+            <span class="name">
+              {sound.title}
+              {sound.isMusic && (
+                <span class="music" title="Music: plays one track at a time">
+                  <Icon name="music_note_1" size={9} />
+                </span>
+              )}
+            </span>
+            <input type="range" min="0" max="1" step="0.01" value="0.75" aria-label={`${sound.title} volume`} />
+          </div>
+        ))
+      }
+    </div>
+
+    <footer class="bar">
+      <label class="master">
+        <Icon name="speaker_2" size={18} />
+        <input type="range" min="0" max="1" step="0.01" value="1" aria-label="Overall volume" />
+      </label>
+      <button class="play" aria-label="Play">
+        <svg class="icon-play" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.6v12.8c0 .8.9 1.3 1.6.9l10-6.4c.6-.4.6-1.3 0-1.7l-10-6.4C8.9 4.3 8 4.8 8 5.6Z"></path></svg>
+        <svg class="icon-pause" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.5" fill="currentColor"></rect><rect x="14" y="5" width="4" height="14" rx="1.5" fill="currentColor"></rect></svg>
+      </button>
+      <span class="spacer"></span>
+    </footer>
+  </div>
+</div>
+
+<script>
+  import catalog from "../../../src/Blanky/Assets/sounds.json";
+  import { presets, accents, type MixState } from "./mixer-data";
+
+  // Mirrors Blanky.Core: cubic slider curve, loudness correction capped at +24 dB,
+  // half-second fades and a -1 dBFS peak limiter on the master bus.
+  const DEFAULT_VOLUME = 0.75;
+  const MAX_CORRECTION = 15.85;
+  const FADE = 0.5;
+  const curve = (v: number) => v * v * v;
+
+  // Black or white on accent fills, whichever reads better (Rgb.PrefersDarkText).
+  function prefersDarkText(hex: string) {
+    const n = parseInt(hex.slice(1), 16);
+    return (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255 > 0.6;
+  }
+
+  type Sound = (typeof catalog.sounds)[number];
+
+  interface Voice {
+    audio: HTMLAudioElement;
+    gain: GainNode;
+    pauseTimer?: number;
+  }
+
+  const root = document.querySelector<HTMLElement>(".mixer")!;
+  const base = root.dataset.base!;
+  const sounds = new Map<string, Sound>(catalog.sounds.map((s) => [s.fileName, s]));
+  const tiles = new Map<string, HTMLElement>(
+    [...root.querySelectorAll<HTMLElement>(".tile")].map((t) => [t.dataset.sound!, t]),
+  );
+  const title = root.querySelector<HTMLElement>(".title")!;
+  const hint = root.querySelector<HTMLElement>(".hint")!;
+  const playButton = root.querySelector<HTMLButtonElement>(".play")!;
+  const masterSlider = root.querySelector<HTMLInputElement>(".master input")!;
+
+  // Each preset keeps its own mix, like the app. "all" starts with the screenshot's mix.
+  const mixes = new Map<string, MixState>([
+    ["all", { accent: "blue", name: "All Blanky Sounds", sounds: { rain: 0.62, waves: 0.5 } }],
+    ...presets.map((p): [string, MixState] => [p.id, { accent: p.accent, name: p.name, sounds: { ...p.sounds } }]),
+  ]);
+  const volumes = new Map<string, number>([...sounds.keys()].map((k) => [k, DEFAULT_VOLUME]));
+  let current = "all";
+  let selected = new Set<string>();
+  let playing = false;
+
+  let context: AudioContext | undefined;
+  let master: GainNode | undefined;
+  const voices = new Map<string, Voice>();
+
+  function ensureContext() {
+    if (!context) {
+      context = new AudioContext();
+      const limiter = context.createDynamicsCompressor();
+      limiter.threshold.value = -1;
+      limiter.knee.value = 0;
+      limiter.ratio.value = 20;
+      limiter.attack.value = 0.003;
+      limiter.release.value = 0.25;
+      master = context.createGain();
+      master.gain.value = Number(masterSlider.value);
+      master.connect(limiter).connect(context.destination);
+    }
+    if (context.state === "suspended") void context.resume();
+    return context;
+  }
+
+  function voiceFor(key: string) {
+    let voice = voices.get(key);
+    if (!voice) {
+      const ctx = ensureContext();
+      const audio = new Audio();
+      audio.loop = true;
+      audio.preload = "auto";
+      audio.setAttribute("playsinline", "");
+      audio.src = `${base}${key}.m4a`;
+      const gain = ctx.createGain();
+      gain.gain.value = 0;
+      ctx.createMediaElementSource(audio).connect(gain).connect(master!);
+      audio.addEventListener("playing", () => tiles.get(key)!.classList.remove("loading"));
+      audio.addEventListener("waiting", () => tiles.get(key)!.classList.add("loading"));
+      voice = { audio, gain };
+      voices.set(key, voice);
+    }
+    return voice;
+  }
+
+  function targetGain(key: string) {
+    const correction = Math.min(sounds.get(key)!.normalizationFactor, MAX_CORRECTION);
+    return curve(volumes.get(key)!) * correction;
+  }
+
+  // Brings one voice in line with the state, fading in or out as needed.
+  function sync(key: string, timeConstant = FADE / 4) {
+    const wanted = playing && selected.has(key);
+    const voice = wanted ? voiceFor(key) : voices.get(key);
+    if (!voice || !context) return;
+    const now = context.currentTime;
+    voice.gain.gain.cancelScheduledValues(now);
+    voice.gain.gain.setTargetAtTime(wanted ? targetGain(key) : 0, now, timeConstant);
+    window.clearTimeout(voice.pauseTimer);
+    if (wanted) {
+      if (voice.audio.paused) {
+        tiles.get(key)!.classList.add("loading");
+        voice.audio.play().catch(() => tiles.get(key)!.classList.remove("loading"));
+      }
+    } else {
+      tiles.get(key)!.classList.remove("loading");
+      voice.pauseTimer = window.setTimeout(() => voice.audio.pause(), FADE * 1000 + 200);
+    }
+  }
+
+  function render() {
+    const mix = mixes.get(current)!;
+    root.style.setProperty("--acc", accents[mix.accent]);
+    root.style.setProperty("--on-acc", prefersDarkText(accents[mix.accent]) ? "black" : "white");
+    title.textContent = mix.name;
+    root.classList.toggle("playing", playing);
+    playButton.setAttribute("aria-label", playing ? "Pause" : "Play");
+    for (const [key, tile] of tiles) {
+      const on = selected.has(key);
+      tile.classList.toggle("selected", on);
+      tile.querySelector(".face")!.setAttribute("aria-pressed", String(on));
+      const slider = tile.querySelector<HTMLInputElement>("input")!;
+      slider.value = String(volumes.get(key));
+      paintSlider(slider);
+    }
+    for (const button of root.querySelectorAll<HTMLElement>(".preset")) {
+      button.classList.toggle("active", button.dataset.preset === current);
+    }
+  }
+
+  function paintSlider(slider: HTMLInputElement) {
+    slider.style.setProperty("--v", `${Number(slider.value) * 100}%`);
+  }
+
+  function saveMix() {
+    const mix = mixes.get(current)!;
+    mix.sounds = Object.fromEntries([...selected].map((k) => [k, volumes.get(k)!]));
+  }
+
+  function loadMix(id: string) {
+    saveMix();
+    current = id;
+    const mix = mixes.get(id)!;
+    selected = new Set(Object.keys(mix.sounds));
+    for (const [key, volume] of Object.entries(mix.sounds)) volumes.set(key, volume);
+  }
+
+  function syncAll() {
+    for (const key of sounds.keys()) sync(key);
+  }
+
+  function setPlaying(value: boolean) {
+    playing = value;
+    if (playing) {
+      if (selected.size === 0) selected.add("rain");
+      hint.hidden = true;
+    }
+    syncAll();
+    render();
+  }
+
+  function toggleSound(key: string) {
+    if (selected.has(key)) {
+      selected.delete(key);
+    } else {
+      selected.add(key);
+      // One music track at a time, so two songs never clash.
+      if (sounds.get(key)!.isMusic) {
+        for (const other of selected) {
+          if (other !== key && sounds.get(other)!.isMusic) selected.delete(other);
+        }
+      }
+    }
+    saveMix();
+    if (!playing && selected.has(key)) {
+      setPlaying(true);
+    } else {
+      syncAll();
+      render();
+    }
+  }
+
+  for (const [key, tile] of tiles) {
+    tile.querySelector(".face")!.addEventListener("click", () => toggleSound(key));
+    const slider = tile.querySelector<HTMLInputElement>("input")!;
+    slider.addEventListener("input", () => {
+      volumes.set(key, Number(slider.value));
+      paintSlider(slider);
+      saveMix();
+      sync(key, 0.02);
+    });
+  }
+
+  for (const button of root.querySelectorAll<HTMLElement>(".preset")) {
+    button.addEventListener("click", () => {
+      if (button.dataset.preset === current && playing) return;
+      loadMix(button.dataset.preset!);
+      setPlaying(true);
+    });
+  }
+
+  playButton.addEventListener("click", () => setPlaying(!playing));
+
+  masterSlider.addEventListener("input", () => {
+    paintSlider(masterSlider);
+    if (master && context) master.gain.setTargetAtTime(Number(masterSlider.value), context.currentTime, 0.02);
+  });
+
+  // Loop progress rings, like the app's LoopRing.
+  function tick() {
+    for (const [key, voice] of voices) {
+      const { currentTime, duration } = voice.audio;
+      const progress = duration > 0 ? currentTime / duration : 0;
+      tiles.get(key)!.style.setProperty("--p", String(progress));
+    }
+    requestAnimationFrame(tick);
+  }
+
+  selected = new Set(Object.keys(mixes.get("all")!.sounds));
+  for (const [key, volume] of Object.entries(mixes.get("all")!.sounds)) volumes.set(key, volume);
+  paintSlider(masterSlider);
+  render();
+  requestAnimationFrame(tick);
+</script>
+
+<style>
+  .mixer {
+    --soft: color-mix(in srgb, var(--acc) 22%, transparent);
+    --glow: color-mix(in srgb, var(--acc) 17%, transparent);
+    --idle: #9a9fa8;
+    --text-2: #c5c8ce;
+    --rail: rgba(255, 255, 255, 0.28);
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 236px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    height: 740px;
+    text-align: left;
+    color: #f3f4f6;
+    background: linear-gradient(160deg, #222a36 0%, #1e2531 45%, #29262a 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    box-shadow:
+      0 30px 80px rgba(0, 0, 0, 0.55),
+      0 8px 24px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    font-family: "Segoe UI Variable Text", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: 0;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  /* ---- Sidebar ---- */
+
+  .sidebar {
+    margin: 8px 0 8px 8px;
+    padding: 12px 8px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 2px 8px 14px;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .brand img {
+    border-radius: 5px;
+  }
+  .group {
+    margin: 14px 8px 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #a9adb6;
+  }
+  .preset {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 7px 8px;
+    border-radius: 6px;
+    font-size: 14px;
+    text-align: left;
+    transition: background 0.15s;
+  }
+  .preset:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .preset.active {
+    background: rgba(255, 255, 255, 0.11);
+  }
+  .preset.active::before {
+    content: "";
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    width: 3px;
+    height: 16px;
+    margin-top: -8px;
+    border-radius: 2px;
+    background: var(--acc);
+  }
+  .badge {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    flex: none;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--acc) 24%, rgba(255, 255, 255, 0.06));
+    color: var(--acc);
+  }
+  .badge img {
+    border-radius: 4px;
+  }
+  .label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ---- Main ---- */
+
+  .main {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    min-width: 0;
+  }
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 28px 4px;
+  }
+  .title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .hint {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--acc);
+    background: var(--soft);
+    padding: 4px 12px;
+    border-radius: 999px;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  .hint[hidden] {
+    display: none;
+  }
+  @keyframes pulse {
+    50% {
+      opacity: 0.6;
+    }
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+    gap: 12px 4px;
+    padding: 12px 20px 24px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    mask-image: linear-gradient(to bottom, transparent, black 12px, black calc(100% - 24px), transparent);
+  }
+
+  .tile {
+    --p: 0;
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    padding: 6px 0 4px;
+  }
+  .face {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    color: var(--idle);
+    transition:
+      background 0.2s,
+      color 0.2s,
+      transform 0.15s var(--ease);
+  }
+  .face:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .face:active {
+    transform: scale(0.95);
+  }
+  .glyph {
+    grid-area: 1 / 1;
+  }
+  .face :global(.filled) {
+    display: none;
+  }
+  .ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .ring circle {
+    fill: none;
+    stroke-width: 3.5;
+  }
+  .track {
+    stroke: var(--glow);
+  }
+  .arc {
+    stroke: var(--acc);
+    stroke-linecap: round;
+    stroke-dasharray: calc(var(--p) * 1) 1;
+  }
+  .name {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-2);
+    white-space: nowrap;
+  }
+  .music {
+    display: grid;
+    place-items: center;
+    width: 15px;
+    height: 15px;
+    border: 1px solid #8d9199;
+    border-radius: 50%;
+    color: #8d9199;
+  }
+
+  .selected .face {
+    background: var(--soft);
+    color: var(--acc);
+  }
+  .selected .ring {
+    opacity: 1;
+  }
+  .selected .face :global(.regular) {
+    display: none;
+  }
+  .selected .face :global(.filled) {
+    display: block;
+  }
+  .selected .name {
+    color: white;
+  }
+  .mixer:not(.playing) .selected .ring {
+    opacity: 0.5;
+  }
+  .loading .ring {
+    animation: spin 1s linear infinite;
+  }
+  .loading .arc {
+    stroke-dasharray: 0.2 0.8;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(270deg);
+    }
+  }
+
+  /* ---- Sliders ---- */
+
+  input[type="range"] {
+    --v: 75%;
+    --fill: var(--rail);
+    appearance: none;
+    width: 112px;
+    height: 20px;
+    margin: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+  .selected input[type="range"],
+  .master input[type="range"] {
+    --fill: var(--acc);
+  }
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(to right, var(--fill) var(--v), var(--rail) var(--v));
+  }
+  input[type="range"]::-moz-range-track {
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(to right, var(--fill) var(--v), var(--rail) var(--v));
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    margin-top: -8px;
+    border-radius: 50%;
+    background: var(--acc);
+    border: 5px solid #45474d;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    transition: border-width 0.1s;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--acc);
+    border: 5px solid #45474d;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    transition: border-width 0.1s;
+  }
+  input[type="range"]:hover::-webkit-slider-thumb {
+    border-width: 4px;
+  }
+  input[type="range"]:hover::-moz-range-thumb {
+    border-width: 4px;
+  }
+
+  /* ---- Bottom bar ---- */
+
+  .bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 16px;
+    padding: 14px 24px;
+    background: rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .master {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-2);
+  }
+  .master input {
+    width: 150px;
+    min-width: 0;
+  }
+  .play {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--acc);
+    color: var(--on-acc, white);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--acc) 40%, transparent);
+    transition: transform 0.15s var(--ease);
+  }
+  .play:hover {
+    transform: scale(1.05);
+  }
+  .play:active {
+    transform: scale(0.95);
+  }
+  .icon-pause,
+  .playing .icon-play {
+    display: none;
+  }
+  .playing .icon-pause {
+    display: block;
+  }
+
+  /* ---- Small screens: presets become chips above the grid ---- */
+
+  @media (max-width: 760px) {
+    .mixer {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto minmax(0, 1fr);
+      height: 600px;
+    }
+    .sidebar {
+      flex-direction: row;
+      gap: 6px;
+      margin: 0;
+      padding: 10px 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      background: rgba(255, 255, 255, 0.04);
+      border: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0;
+    }
+    .brand,
+    .group {
+      display: none;
+    }
+    .preset {
+      flex: none;
+      padding: 5px 12px 5px 5px;
+      gap: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      font-size: 13px;
+    }
+    .preset.active::before {
+      display: none;
+    }
+    .preset.active {
+      background: var(--soft);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--acc) 50%, transparent);
+    }
+    .badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+    }
+    .badge img {
+      width: 16px;
+      height: 16px;
+    }
+    .top {
+      padding: 14px 16px 2px;
+    }
+    .title {
+      font-size: 17px;
+    }
+    .grid {
+      grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+      padding: 10px 8px 20px;
+    }
+    .face {
+      width: 76px;
+      height: 76px;
+    }
+    .face :global(svg.glyph) {
+      width: 36px;
+      height: 36px;
+    }
+    .name {
+      font-size: 13px;
+    }
+    input[type="range"] {
+      width: 92px;
+    }
+    .bar {
+      padding: 10px 16px;
+    }
+    .master input {
+      flex: 1;
+      width: auto;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hint,
+    .loading .ring {
+      animation: none;
+    }
+  }
+</style>

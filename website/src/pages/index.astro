@@ -1,7 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Feature from "../components/Feature.astro";
-import Screenshot from "../components/Screenshot.astro";
+import Mixer from "../components/Mixer.astro";
 import Icon from "../components/Icon.astro";
 import { site, url } from "../site";
 import catalog from "../../../src/Blanky/Assets/sounds.json";
@@ -37,7 +37,8 @@ const others = [
       </h1>
       <p class="lede tagline">Rest deeper at night. Stay focused during the day. Now on Windows.</p>
       <div class="hero-shot">
-        <Screenshot src="mixer-dark.png" alt="Blanky's main window: a sidebar of favorites and sounds, and a grid of sound tiles with Rain, Waves, Fan and Warm Piano playing." eager />
+        <Mixer />
+        <p class="try">Try it here: these are the real sounds and presets from the app. Headphones recommended.</p>
       </div>
       <div class="cta">
         <a class="button primary large" href={site.releases}>
@@ -235,11 +236,25 @@ const others = [
     margin-top: 24px;
   }
   .hero-shot {
+    position: relative;
     max-width: 960px;
     margin: 56px auto 0;
   }
+  /* Soft accent glow behind the window, like the screenshots' device art. */
+  .hero-shot::before {
+    content: "";
+    position: absolute;
+    inset: 8% 6%;
+    background: radial-gradient(closest-side, rgba(76, 141, 255, 0.35), transparent);
+    filter: blur(40px);
+  }
+  .try {
+    margin: 20px 0 0;
+    color: var(--fg-3);
+    font-size: 14px;
+  }
   .cta {
-    margin-top: 48px;
+    margin-top: 40px;
     display: grid;
     justify-items: center;
     gap: 16px;
