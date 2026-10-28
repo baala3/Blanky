@@ -29,8 +29,6 @@ jobs:
 
   publish:
     uses: ./.github/workflows/publish.yml
-    with:
-      name: ci-${{ github.sha }}
 
   website:
     runs-on: ubuntu-latest

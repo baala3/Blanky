@@ -64,6 +64,8 @@ public sealed partial class MainWindow : Window
 
     internal SidebarModel Sidebar { get; }
 
+    internal Updater Updater { get; } = App.Current.Updater;
+
     public void BringToFront()
     {
         if (AppWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized } presenter)
@@ -289,6 +291,13 @@ public sealed partial class MainWindow : Window
     private void OnBackToPreset(object sender, RoutedEventArgs e) => Audio.ReturnToPreset();
 
     private void OnQuickMix(object sender, RoutedEventArgs e) => Audio.EnterQuickMix();
+
+    // Closing saves the mix as usual; Velopack swaps in the update and relaunches.
+    private void OnRestartToUpdate(object sender, RoutedEventArgs e)
+    {
+        Updater.PrepareRestart();
+        Close();
+    }
 
     private void OnTimerFlyoutOpening(object sender, object e) => TimerPanel.Refresh();
 

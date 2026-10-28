@@ -15,4 +15,6 @@ internal static class Ui
     /// <summary>"Save as Preset" shows on the all-sounds page once something is selected.</summary>
     public static Visibility CanSaveAsPreset(PlaybackMode mode, Core.Model.Preset? preset, bool hasSelection) =>
         mode == PlaybackMode.Preset && preset is { IsDefault: true } && hasSelection ? Visibility.Visible : Visibility.Collapsed;
+
+    public static string UpdateTooltip(string version) => $"Blanky {version} is ready. Restart to update.";
 }

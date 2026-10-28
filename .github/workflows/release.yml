@@ -1,6 +1,7 @@
 name: Release
 
-# Push a tag like v1.0.0 to build and publish a release.
+# Push a tag like v1.0.0 to build and publish a release. Installed copies of
+# Blanky find it through the releases.<channel>.json files and update themselves.
 on:
   push:
     tags: ["v*"]
@@ -13,7 +14,7 @@ jobs:
     uses: ./.github/workflows/publish.yml
     with:
       version: ${{ github.ref_name }}
-      name: ${{ github.ref_name }}
+      deltas: true
 
   release:
     needs: publish
@@ -25,5 +26,5 @@ jobs:
           merge-multiple: true
       - uses: softprops/action-gh-release@v3
         with:
-          files: Blanky-*.zip
+          files: "*"
           generate_release_notes: true

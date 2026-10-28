@@ -13,7 +13,7 @@ Ambient sound mixer for Windows
   <a href="https://github.com/baala3/Blanky/actions/workflows/ci.yml"><img src="https://github.com/baala3/Blanky/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 </p>
 
-<p><a href="https://github.com/baala3/Blanky/releases/latest"><b>Download for Windows</b></a> · <a href="https://blanky.balashekhar.me/">Website</a> · <a href="https://blanky.balashekhar.me/faq/">FAQ</a></p>
+<p><a href="https://github.com/baala3/Blanky/releases/latest/download/Blanky-Setup-x64.exe"><b>Download for Windows</b></a> · <a href="https://blanky.balashekhar.me/">Website</a> · <a href="https://blanky.balashekhar.me/faq/">FAQ</a></p>
 
 <img src="docs/screenshot.png" alt="Blanky's main window with Rain, Waves, Fan and Warm Piano playing" width="900">
 </div>
@@ -36,13 +36,17 @@ It's the Windows member of a small family of free, open-source mixers: [Blanket]
 - **Single-sound mode and Quick Mix** for fast listening
 - **Native Windows 11 look** with Mica, light and dark themes and your Windows accent color
 - **Keyboard shortcuts**: Space, Ctrl+↑/↓ for volume, Ctrl+→/← for favorites
-- **Private and offline**: no account, no analytics, no network access
+- **Private and offline**: no account, no analytics; the only network use is checking GitHub for updates
+- **Updates itself** in the background, with no admin rights needed to install
 
 ## Install
 
-1. Download the zip for your PC from the [latest release](https://github.com/baala3/Blanky/releases/latest) (`x64` for most PCs, `arm64` for Snapdragon PCs).
-2. Extract it somewhere permanent, for example `%LOCALAPPDATA%\Programs\Blanky`.
-3. Run `Blanky.exe`.
+1. Download [Blanky-Setup-x64.exe](https://github.com/baala3/Blanky/releases/latest/download/Blanky-Setup-x64.exe), or [Blanky-Setup-arm64.exe](https://github.com/baala3/Blanky/releases/latest/download/Blanky-Setup-arm64.exe) for Snapdragon and other Arm64 PCs.
+2. Run it.
+   Blanky installs for your account in a few seconds, without admin rights, and adds itself to the Start menu.
+
+Blanky keeps itself up to date: it downloads new versions in the background and installs them when you restart it.
+Uninstall it from **Settings > Apps > Installed apps**; your presets and settings stay in `%LOCALAPPDATA%\Blanky`.
 
 Releases aren't code-signed yet, so SmartScreen may warn on first launch; choose **More info**, then **Run anyway**.
 Every release is built from this repository by GitHub Actions.

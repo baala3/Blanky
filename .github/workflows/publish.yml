@@ -1,7 +1,8 @@
 name: Publish
 
-# Builds the self-contained Native AOT app zips. Called by CI on every push, so an
-# AOT break shows up before release day, and by the release workflow on tags.
+# Builds the Native AOT app and packages it into a Velopack installer and update
+# feed. Called by CI on every push, so a packaging or AOT break shows up before
+# release day, and by the release workflow on tags.
 on:
   workflow_call:
     inputs:
@@ -9,17 +10,22 @@ on:
         description: "Version to stamp, e.g. 1.2.0 or v1.2.0. Defaults to the one in Directory.Build.props."
         type: string
         default: ""
-      name:
-        description: "Zip name suffix, e.g. v1.2.0."
-        type: string
-        required: true
+      deltas:
+        description: "Build delta updates from the latest GitHub release."
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
+env:
+  # The installed app lives in %LOCALAPPDATA%\Blanky.App. It must not be "Blanky":
+  # that folder holds user data, and Velopack replaces and deletes its own folder.
+  PACK_ID: Blanky.App
+
 jobs:
   publish:
-    # Each architecture builds and smoke-tests on its own hardware.
+    # Each architecture builds and tests on its own hardware.
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 40
     strategy:
@@ -28,9 +34,11 @@ jobs:
         include:
           - platform: x64
             rid: win-x64
+            arch: x64
             runner: windows-latest
           - platform: ARM64
             rid: win-arm64
+            arch: arm64
             runner: windows-11-arm
     steps:
       - uses: actions/checkout@v7
@@ -38,36 +46,91 @@ jobs:
         with:
           global-json-file: global.json
 
-      - name: Publish
+      - name: Version
+        id: version
         shell: pwsh
         run: |
           $version = "${{ inputs.version }}".TrimStart("v")
-          $extra = @()
-          if ($version) { $extra += "-p:Version=$version" }
-          dotnet publish src/Blanky/Blanky.csproj -c Release -p:Platform=${{ matrix.platform }} -r ${{ matrix.rid }} @extra -o publish -nologo
+          if (-not $version) { $version = ([xml](Get-Content Directory.Build.props)).Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1 }
+          # vpk must match the Velopack library the app is built with.
+          $vpk = (([xml](Get-Content Directory.Packages.props)).Project.ItemGroup.PackageVersion | Where-Object Include -eq "Velopack").Version
+          if (-not $version -or -not $vpk) { throw "Couldn't read the app or vpk version" }
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "vpk=$vpk" >> $env:GITHUB_OUTPUT
+          "Blanky $version, vpk $vpk"
+
+      - name: Publish
+        shell: pwsh
+        run: |
+          dotnet publish src/Blanky/Blanky.csproj -c Release -p:Platform=${{ matrix.platform }} -r ${{ matrix.rid }} -p:Version=${{ steps.version.outputs.version }} -o publish -nologo
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           foreach ($required in "Blanky.exe", "Blanky.pri", "Assets/sounds.json") {
             if (-not (Test-Path "publish/$required")) { throw "$required missing from publish output" }
           }
-
-      - name: Smoke test
-        shell: pwsh
-        run: scripts/smoke-test.ps1 -Exe publish/Blanky.exe
-
-      - name: Zip
-        shell: pwsh
-        run: |
           # Symbols ship separately; users don't need them.
           New-Item -ItemType Directory symbols | Out-Null
           Move-Item publish/*.pdb symbols/
-          Compress-Archive -Path publish/* -DestinationPath "Blanky-${{ inputs.name }}-${{ matrix.rid }}.zip"
-          $size = (Get-Item "Blanky-${{ inputs.name }}-${{ matrix.rid }}.zip").Length / 1MB
-          "Zip size: {0:N1} MB" -f $size | Tee-Object -Append $env:GITHUB_STEP_SUMMARY
+
+      - name: Package
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          dotnet tool install --global vpk --version ${{ steps.version.outputs.vpk }}
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ("${{ inputs.deltas }}" -eq "true") {
+            # The previous release's package, to build a small delta update from.
+            vpk download github --repoUrl "https://github.com/${{ github.repository }}" --channel ${{ matrix.rid }} --token $env:GH_TOKEN -o releases
+            if ($LASTEXITCODE -ne 0) { "::warning::No previous release to build a delta from; updates will download the full package." }
+          }
+          vpk pack --packId $env:PACK_ID --packVersion ${{ steps.version.outputs.version }} --packDir publish --mainExe Blanky.exe `
+            --packTitle Blanky --packAuthors Bala --icon src/Blanky/Assets/Blanky.ico --splashImage assets/brand/blanky-icon-512.png `
+            --channel ${{ matrix.rid }} --runtime ${{ matrix.rid }} --noPortable -o releases
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Stage release files
+        shell: pwsh
+        run: |
+          # Like `vpk upload`: publish only this build's files, with a feed that lists
+          # only them, since Velopack downloads each file from the release that lists it.
+          $channel = "${{ matrix.rid }}"
+          $built = Get-Content "releases/assets.$channel.json" -Raw | ConvertFrom-Json
+          New-Item -ItemType Directory upload | Out-Null
+          foreach ($asset in $built) {
+            $name = if ($asset.Type -eq "Installer") { "Blanky-Setup-${{ matrix.arch }}.exe" } else { $asset.RelativeFileName }
+            Copy-Item "releases/$($asset.RelativeFileName)" "upload/$name"
+          }
+          $names = @($built.RelativeFileName)
+          $feed = Get-Content "releases/releases.$channel.json" -Raw | ConvertFrom-Json
+          $feed.Assets = @($feed.Assets | Where-Object { $names -contains $_.FileName })
+          if ($feed.Assets.Count -eq 0) { throw "The update feed lists none of this build's packages" }
+          [IO.File]::WriteAllText("$PWD/upload/releases.$channel.json", ($feed | ConvertTo-Json -Depth 5))
+          $written = (Get-Content "upload/releases.$channel.json" -Raw | ConvertFrom-Json).Assets
+          foreach ($entry in $written) {
+            if (-not (Test-Path "upload/$($entry.FileName)")) { throw "The feed lists $($entry.FileName), which isn't staged" }
+          }
+          if (@($written).Count -ne @($feed.Assets).Count) { throw "The feed didn't round-trip" }
+          Get-ChildItem upload | ForEach-Object { "{0,-44} {1,8:N1} MB" -f $_.Name, ($_.Length / 1MB) } | Tee-Object -Append $env:GITHUB_STEP_SUMMARY
+
+      - name: Install, smoke test and uninstall
+        shell: pwsh
+        run: |
+          $root = Join-Path $env:LOCALAPPDATA $env:PACK_ID
+          $setup = Start-Process "upload/Blanky-Setup-${{ matrix.arch }}.exe" -ArgumentList "--silent" -PassThru -Wait
+          if ($setup.ExitCode -ne 0) { throw "Setup failed with exit code $($setup.ExitCode)" }
+          if (-not (Test-Path "$root/current/Blanky.exe")) { throw "Setup didn't install Blanky.exe" }
+
+          scripts/smoke-test.ps1 -Exe "$root/current/Blanky.exe"
+
+          $uninstall = Start-Process "$root/Update.exe" -ArgumentList "--uninstall", "--silent" -PassThru -Wait
+          if ($uninstall.ExitCode -ne 0) { throw "Uninstall failed with exit code $($uninstall.ExitCode)" }
+          Start-Sleep -Seconds 5
+          if (Test-Path "$root/current") { throw "Uninstall left the app behind" }
 
       - uses: actions/upload-artifact@v7
         with:
           name: Blanky-${{ matrix.rid }}
-          path: Blanky-*.zip
+          path: upload/
           if-no-files-found: error
 
       - uses: actions/upload-artifact@v7

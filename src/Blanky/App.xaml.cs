@@ -36,6 +36,8 @@ public partial class App : Application
 
     internal AppPaths Paths { get; private set; } = null!;
 
+    internal Updater Updater { get; private set; } = null!;
+
     /// <summary>Debug-only: <c>--capture path.png</c> screenshots the window and exits.</summary>
     internal string? CapturePath { get; private set; }
 
@@ -56,6 +58,8 @@ public partial class App : Application
         var library = new SoundLibrary(store, Settings, decoders, Path.Combine(assets, "sounds.json"), Path.Combine(assets, "Sounds"));
         Audio = new AudioManager(_engine, Settings, new PresetManager(store), library);
         Theme = new ThemeManager(Resources);
+        // Debug-only: --update-source points updates at a local feed for testing.
+        Updater = new Updater(ArgValue("--update-source"), [.. PassThroughArgs("--data", "--update-source")]);
 
         Audio.Restore();
         if (CapturePath is not null || ExitAfter is not null)
@@ -81,6 +85,11 @@ public partial class App : Application
         _window = new MainWindow();
         AppInstance.GetCurrent().Activated += (_, _) => _window.DispatcherQueue.TryEnqueue(_window.BringToFront);
         _window.Activate();
+        // Scripted runs (CI smoke tests, screenshots) stay offline unless given a feed.
+        if ((CapturePath is null && ExitAfter is null) || ArgValue("--update-source") is not null)
+        {
+            Updater.Start();
+        }
     }
 
     /// <summary>Stops audio and saves everything. Called once, when the window closes.</summary>
@@ -90,6 +99,8 @@ public partial class App : Application
         Audio.Dispose();
         Settings.Dispose();
         System.Diagnostics.Trace.TraceInformation("Shutdown: state saved");
+        Updater.ApplyOnExit();
+        Updater.Dispose();
 
         // The engine's teardown never needs the UI thread, so blocking on it here is safe.
         if (_engine is { } engine)
@@ -113,6 +124,18 @@ public partial class App : Application
         catch (IOException)
         {
             // Another process holds the log; run without one.
+        }
+    }
+
+    private IEnumerable<string> PassThroughArgs(params string[] names)
+    {
+        foreach (var name in names)
+        {
+            if (ArgValue(name) is { } value)
+            {
+                yield return name;
+                yield return value;
+            }
         }
     }
 
