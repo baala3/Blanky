@@ -1,0 +1,121 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Icon from "../components/Icon.astro";
+import { site } from "../site";
+import catalog from "../../../src/Blanky/Assets/sounds.json";
+
+// Generated from the app's own catalog, so the credits always match what ships.
+const sounds = catalog.sounds;
+---
+
+<Layout title="Credits" description="The people and projects behind Blanky's sounds, icons and design.">
+  <div class="container page">
+    <header class="page-header">
+      <h1 class="display">Credits</h1>
+      <p class="lede">Blanky stands on the work of people who shared it openly. Thank you.</p>
+    </header>
+
+    <div class="prose">
+      <h2>Inspiration</h2>
+      <p>
+        <a href={site.blanket}>Blanket</a> by Rafael Mardojai CM for Linux, and <a href={site.blankie}>Blankie</a> by Cody
+        Bromley for Mac, iPhone and iPad. Blanky's features, sound loops and this website's design follow Blankie, whose
+        source code is MIT licensed. The Blankie name and icons are Cody Bromley's trademarks and are not used here.
+      </p>
+
+      <h2>Sounds</h2>
+      <p>Each sound is used under the license shown. Loop cuts and loudness levels come from Blankie.</p>
+    </div>
+
+    <ul class="sound-list">
+      {
+        sounds.map((sound) => (
+          <li class="glass">
+            <Icon name={sound.icon} size={26} filled class="sound-icon" />
+            <div>
+              <strong>{sound.title}</strong>
+              <span>
+                "{sound.credit.soundName}" by{" "}
+                {sound.credit.authorUrl ? <a href={sound.credit.authorUrl}>{sound.credit.author}</a> : sound.credit.author}
+                {sound.credit.sourceUrl && (
+                  <>
+                    {" "}
+                    · <a href={sound.credit.sourceUrl}>source</a>
+                  </>
+                )}
+              </span>
+            </div>
+            <span class="license">{sound.credit.license}</span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="prose">
+      <h2>Icons</h2>
+      <p>
+        <a href="https://github.com/microsoft/fluentui-system-icons">Fluent UI System Icons</a> by Microsoft (MIT), and three
+        <a href="https://github.com/google/material-design-icons">Material Symbols</a> by Google (Apache 2.0) for Birds, Fan
+        and Warm Piano.
+      </p>
+
+      <h2>Software</h2>
+      <ul>
+        <li><a href="https://github.com/microsoft/WindowsAppSDK">Windows App SDK and WinUI 3</a> (MIT)</li>
+        <li><a href="https://github.com/naudio/NAudio">NAudio</a> by Mark Heath (MIT)</li>
+        <li><a href="https://github.com/CommunityToolkit/dotnet">.NET Community Toolkit</a> (MIT)</li>
+        <li><a href="https://astro.build">Astro</a> for this website (MIT)</li>
+      </ul>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .sound-list {
+    list-style: none;
+    padding: 0;
+    margin: 24px 0 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .sound-list li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: 14px;
+  }
+  .sound-list :global(.sound-icon) {
+    flex: none;
+    color: var(--accent-ink);
+  }
+  .sound-list div {
+    flex: 1;
+    min-width: 0;
+  }
+  .sound-list strong {
+    display: block;
+  }
+  .sound-list span {
+    color: var(--fg-2);
+    font-size: 14px;
+  }
+  .sound-list a {
+    color: var(--accent-ink);
+  }
+  .license {
+    flex: none;
+    font-size: 12px !important;
+    font-weight: 600;
+    border: 1px solid var(--hair);
+    border-radius: 999px;
+    padding: 2px 10px;
+    white-space: nowrap;
+  }
+  @media (max-width: 760px) {
+    .sound-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

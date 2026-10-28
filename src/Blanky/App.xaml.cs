@@ -62,6 +62,10 @@ public partial class App : Application
         {
             // Screenshots are silent and reproducible.
             _engine.MasterVolume = 0;
+            if (ArgValue("--demo-preset") is { } presetName && Audio.Presets.Presets.FirstOrDefault(p => p.Name == presetName) is { } preset)
+            {
+                Audio.ApplyPreset(preset);
+            }
             if (ArgValue("--demo") is { } demo)
             {
                 foreach (var name in demo.Split(','))
@@ -112,7 +116,7 @@ public partial class App : Application
         }
     }
 
-    private string? ArgValue(string name)
+    internal string? ArgValue(string name)
     {
         int index = Array.IndexOf(_args, name);
         return index >= 0 && index + 1 < _args.Length ? _args[index + 1] : null;

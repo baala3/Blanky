@@ -1,9 +1,9 @@
 <Project>
   <PropertyGroup>
     <Version>1.0.0</Version>
-    <Authors>Bala Kamandla and contributors</Authors>
+    <Authors>Bala and contributors</Authors>
     <Product>Blanky</Product>
-    <Copyright>© 2026 Bala Kamandla and contributors</Copyright>
+    <Copyright>© 2026 Bala and contributors</Copyright>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>

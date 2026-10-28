@@ -10,8 +10,12 @@
     <UseWinUI>true</UseWinUI>
     <WindowsPackageType>None</WindowsPackageType>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <!-- Required for dotnet publish to include Blanky.pri (compiled XAML) in an unpackaged app. -->
+    <EnableMsixTooling>true</EnableMsixTooling>
     <SelfContained>true</SelfContained>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\Blanky.ico</ApplicationIcon>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <!-- WinUI's generated code trips a few analyzers we don't control. -->
@@ -19,9 +23,12 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="H.NotifyIcon.WinUI" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" />
+    <!-- Only the Windows App SDK components Blanky uses; the meta-package also
+         ships AI/ML runtimes (onnxruntime, DirectML) that add ~40 MB. -->
+    <PackageReference Include="Microsoft.WindowsAppSDK.Foundation" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" />
     <PackageReference Include="NAudio.Wasapi" />
   </ItemGroup>
   <ItemGroup>
@@ -31,5 +38,7 @@
     <Content Include="Assets\Sounds\*.m4a" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Assets\sounds.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Assets\icons.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Assets\Blanky.ico" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Assets\BlankyLogo.png" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

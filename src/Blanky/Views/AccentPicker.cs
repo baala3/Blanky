@@ -51,7 +51,7 @@ public sealed partial class AccentPicker : UserControl
         if (name is null)
         {
             // Mark the "follow Windows" option so it reads differently from a fixed color.
-            swatch.Children.Add(new FontIcon { Glyph = "", FontSize = 13, Foreground = new SolidColorBrush(Colors.White) });
+            swatch.Children.Add(new FontIcon { Glyph = "\uE770", FontSize = 13, Foreground = new SolidColorBrush(Colors.White) });
         }
         ToolTipService.SetToolTip(swatch, label);
         Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(swatch, label);

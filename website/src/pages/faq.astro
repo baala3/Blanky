@@ -1,0 +1,106 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site, url } from "../site";
+---
+
+<Layout title="FAQ" description="Answers to common questions about Blanky, the free ambient sound mixer for Windows.">
+  <div class="container page">
+    <header class="page-header">
+      <h1 class="display">Frequently asked questions</h1>
+      <p class="lede">Everything about installing and using Blanky on Windows.</p>
+    </header>
+    <div class="prose">
+      <h2 id="getting-started">Getting started</h2>
+
+      <h3>What does Blanky run on?</h3>
+      <p>Windows 11, and Windows 10 version 2004 or later, on x64 and Arm64 PCs.</p>
+
+      <h3 id="install">How do I install Blanky?</h3>
+      <ol>
+        <li>Download the zip for your PC from the <a href={site.releases}>latest release</a> on GitHub (<code>x64</code> for most PCs, <code>arm64</code> for Snapdragon PCs).</li>
+        <li>Extract it somewhere permanent, for example <code>%LOCALAPPDATA%\Programs\Blanky</code>.</li>
+        <li>Open <code>Blanky.exe</code>. Pin it to Start or the taskbar to find it again.</li>
+      </ol>
+      <p>
+        Blanky isn't code-signed yet, so Windows SmartScreen may say it "protected your PC" the first time. Choose
+        <strong>More info</strong>, then <strong>Run anyway</strong>. The code is open, and every release is built from
+        the public repository by GitHub Actions.
+      </p>
+
+      <h3>Does Blanky work offline?</h3>
+      <p>Yes. All sounds are bundled with the app and it never connects to the internet.</p>
+
+      <h2 id="sounds">Sounds and presets</h2>
+
+      <h3>How do I play sounds?</h3>
+      <p>
+        Click a sound to add it to your mix, and click it again to take it out. Each sound has its own volume slider. The
+        play button pauses and resumes everything, and the slider next to it sets the overall volume.
+      </p>
+
+      <h3>Can I add my own sounds?</h3>
+      <p>
+        Yes. Use the <strong>+</strong> button at the top of the sidebar, then <strong>Import Sound or Preset</strong>
+        (<kbd>Ctrl</kbd>+<kbd>I</kbd>). Blanky imports M4A, MP3, WAV, FLAC, AAC and WMA (plus Ogg and Opus with Microsoft's free Web Media Extensions), and matches each import to the
+        same loudness as the built-in sounds.
+      </p>
+
+      <h3>How do I save a mix?</h3>
+      <p>
+        On the All Blanky Sounds page, pick your sounds and click <strong>Save as Preset</strong> (<kbd>Ctrl</kbd>+<kbd>N</kbd>).
+        Changes you make while a preset is playing are saved into it automatically. Right-click a preset to rename it, give
+        it its own accent color, export it or delete it.
+      </p>
+
+      <h3>Can I use presets from Blankie on my Mac?</h3>
+      <p>
+        Yes. Blanky reads <code>.blankie</code> files exported from <a href={site.blankieSite}>Blankie</a>, including any
+        custom sounds inside them. Blanky exports <code>.blanky</code> files with the same layout.
+      </p>
+
+      <h3>Why does only one music sound play at a time?</h3>
+      <p>
+        Sounds marked with a music note (Ambient Synth, Gentle Guitar, Lo-Fi Beats and Warm Piano) are songs. Starting one
+        stops the other, so two tracks never clash. Nature and noise sounds can be layered freely.
+      </p>
+
+      <h2 id="playback">Playback</h2>
+
+      <h3>What are the keyboard shortcuts?</h3>
+      <ul>
+        <li><kbd>Space</kbd> plays or pauses.</li>
+        <li><kbd>Ctrl</kbd>+<kbd>↑</kbd> and <kbd>Ctrl</kbd>+<kbd>↓</kbd> change the overall volume.</li>
+        <li><kbd>Ctrl</kbd>+<kbd>→</kbd> and <kbd>Ctrl</kbd>+<kbd>←</kbd> move between favorites.</li>
+        <li><kbd>Ctrl</kbd>+<kbd>N</kbd> saves a new preset, <kbd>Ctrl</kbd>+<kbd>I</kbd> imports, <kbd>Ctrl</kbd>+<kbd>S</kbd> shows or hides the sidebar.</li>
+      </ul>
+
+      <h3>Will Blanky keep my PC awake?</h3>
+      <p>
+        Only while it's playing. Once your mix is paused (by you or the sleep timer), Blanky releases the audio device so
+        Windows can sleep as usual.
+      </p>
+
+      <h2 id="free">Free and open source</h2>
+
+      <h3>Is Blanky free?</h3>
+      <p>
+        Yes, completely, with no ads, subscriptions or tracking. If you'd like to support it, you can
+        <a href={site.buyMeACoffee}>buy me a coffee</a>, <a href={site.sponsors}>sponsor on GitHub</a> or star the
+        <a href={site.repo}>repository</a>.
+      </p>
+
+      <h3>How is Blanky related to Blankie and Blanket?</h3>
+      <p>
+        <a href={site.blanket}>Blanket</a> is the original ambient sound app for Linux.
+        <a href={site.blankie}>Blankie</a> brought the idea to Mac, iPhone and iPad. Blanky is an independent Windows app
+        inspired by both. It uses the same openly licensed sounds and a design modeled on Blankie, but it's built
+        separately in C# and WinUI.
+      </p>
+
+      <h3>Where do I report a bug or ask for a feature?</h3>
+      <p>Open an issue on <a href={site.issues}>GitHub</a>. Including <code>%LOCALAPPDATA%\Blanky\blanky.log</code> helps with audio problems.</p>
+
+      <p><a href={url()}>Back to home</a></p>
+    </div>
+  </div>
+</Layout>

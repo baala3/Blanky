@@ -1,0 +1,37 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site } from "../site";
+---
+
+<Layout title="Privacy Policy" description="Blanky collects no data. Here is exactly what it stores, and where.">
+  <div class="container page">
+    <header class="page-header">
+      <h1 class="display">Privacy Policy</h1>
+      <p class="lede">Short version: Blanky collects nothing and never connects to the internet.</p>
+    </header>
+    <div class="prose">
+      <h2>The app</h2>
+      <p>
+        Blanky has no accounts, analytics, ads or crash reporting, and makes no network connections. Everything it stores
+        stays on your PC in <code>%LOCALAPPDATA%\Blanky</code>:
+      </p>
+      <ul>
+        <li>your settings, presets and favorites (JSON files);</li>
+        <li>copies of sounds you import, and preset artwork;</li>
+        <li>a small log file, <code>blanky.log</code>, rewritten at each launch, that records audio device events to help fix bugs. It never leaves your PC unless you attach it to a bug report yourself.</li>
+      </ul>
+      <p>Deleting that folder removes everything Blanky has stored.</p>
+
+      <h2>This website</h2>
+      <p>
+        This site is hosted on GitHub Pages and uses no cookies, analytics or trackers. GitHub may keep standard server
+        logs; see <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a>.
+        Links to GitHub, Buy Me a Coffee and other sites are covered by their own policies.
+      </p>
+
+      <h2>Questions</h2>
+      <p>Open an issue on <a href={site.issues}>GitHub</a>.</p>
+      <p>Last updated: October 28, 2026.</p>
+    </div>
+  </div>
+</Layout>

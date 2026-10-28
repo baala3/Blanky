@@ -43,11 +43,17 @@
                             RadiusY="1.5"
                             Visibility="{x:Bind IsActive, Mode=OneWay}" />
 
+                        <Image
+                            Width="32"
+                            Height="32"
+                            Source="ms-appx:///Assets/BlankyLogo.png"
+                            Visibility="{x:Bind IsAppRow}" />
                         <Border
                             Width="32"
                             Height="32"
                             Background="{ThemeResource BlankyAccentSoftBrush}"
-                            CornerRadius="8">
+                            CornerRadius="8"
+                            Visibility="{x:Bind local:Ui.Not(IsAppRow)}">
                             <Grid>
                                 <controls:SoundIcon
                                     Width="18"
@@ -148,18 +154,10 @@
                     VerticalAlignment="Center"
                     Orientation="Horizontal"
                     Spacing="10">
-                    <Border
+                    <Image
                         Width="22"
                         Height="22"
-                        Background="{ThemeResource BlankyAccentBrush}"
-                        CornerRadius="6">
-                        <controls:SoundIcon
-                            Width="14"
-                            Height="14"
-                            Filled="True"
-                            Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
-                            Icon="sound_wave_circle" />
-                    </Border>
+                        Source="ms-appx:///Assets/BlankyLogo.png" />
                     <TextBlock
                         VerticalAlignment="Center"
                         FontSize="14"
@@ -341,6 +339,7 @@
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Glyph="&#xE767;" />
                     <Slider
+                        x:Name="VolumeSlider"
                         Width="170"
                         AutomationProperties.Name="All sounds volume"
                         IsThumbToolTipEnabled="False"
@@ -406,6 +405,7 @@
                         </Button.Flyout>
                     </Button>
                     <Button
+                        x:Name="AccentButton"
                         AutomationProperties.Name="Accent color"
                         Style="{StaticResource BarIconButtonStyle}"
                         ToolTipService.ToolTip="Accent color">

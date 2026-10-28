@@ -1,0 +1,484 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Feature from "../components/Feature.astro";
+import Screenshot from "../components/Screenshot.astro";
+import Icon from "../components/Icon.astro";
+import { site, url } from "../site";
+import catalog from "../../../src/Blanky/Assets/sounds.json";
+
+const soundCount = catalog.sounds.length;
+
+const included = [
+  { title: `All ${soundCount} built-in sounds`, text: "Rain, waves, fireplace, noise colors and music loops" },
+  { title: "Unlimited layers", text: "Mix as many sounds as you like, each with its own volume" },
+  { title: "Import your own audio", text: "Loudness-matched automatically so nothing ruins the mix" },
+  { title: "Sleep timer", text: "Pauses your mix when it runs out" },
+  { title: "Shareable presets", text: "Export mixes as files, and import presets from Blankie on Mac" },
+  { title: "100% offline and private", text: "No account, no analytics, no internet connection needed" },
+  { title: "Accent colors and themes", text: "Per-preset accents, light and dark that follow Windows" },
+  { title: "Every update, free", text: "No Pro tier, no upgrade screen, no unlocks to buy later" },
+];
+
+const others = [
+  "Limit what you can listen to until you pay",
+  "Can monitor how you use the app",
+  "Have free trials that start charging you automatically",
+  "Collect your personal information",
+  "Show ads between your sounds",
+];
+---
+
+<Layout title="Blanky">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container center">
+      <h1 class="display headline">
+        Ambient<br />sounds for<br /><span class="grad-text">sleep and focus.</span>
+      </h1>
+      <p class="lede tagline">Rest deeper at night. Stay focused during the day. Now on Windows.</p>
+      <div class="hero-shot">
+        <Screenshot src="mixer-dark.png" alt="Blanky's main window: a sidebar of favorites and sounds, and a grid of sound tiles with Rain, Waves, Fan and Warm Piano playing." eager />
+      </div>
+      <div class="cta">
+        <a class="button primary large" href={site.releases}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 19h16"></path></svg>
+          Download for Windows
+        </a>
+        <p class="free-chip">All features 100% free. No ads or subscriptions.</p>
+        <p class="requirements">Windows 10 (version 2004 or later) or Windows 11 · x64 and Arm64</p>
+      </div>
+    </div>
+  </section>
+
+  <Feature
+    eyebrow="Mix"
+    title="Layer as many<br />sounds as you like."
+    lede={`Blanky comes with ${soundCount} built-in sounds, from steady rain and bedroom fans to coffee shops and brown noise. Start with one, layer in another and balance each volume until the mix feels right.`}
+    items={[
+      { icon: "graphic_eq", title: "Individually adjustable volumes", text: "Every sound has its own slider so you can set each one as loud or quiet as you want." },
+      { icon: "music_note_2", title: "One song at a time", text: "Music loops like Lo-Fi Beats and Warm Piano take turns, so two tracks never clash." },
+      { icon: "headphones", title: "Bring your own sounds", text: "Import MP3, M4A, WAV, FLAC and more, matched to the same loudness as the built-ins." },
+    ]}
+    image="preset-dark.png"
+    alt="The Cozy Night In preset with Fireplace, Wind and Warm Piano playing in an orange accent."
+  />
+
+  <Feature
+    reverse
+    eyebrow="Sleep timer"
+    title="Fall asleep without<br />playing all night."
+    lede="Set a timer when you get into bed and Blanky pauses your mix on its own, or let it loop until morning."
+    items={[
+      { icon: "clock", title: "Short fade at bedtime", text: "When the timer ends, your sounds fade out instead of cutting off." },
+      { icon: "weather_moon", title: "All-night loops", text: "Built-in sounds are loop-cut recordings made to repeat all night." },
+      { icon: "sleep", title: "Lets your PC sleep", text: "Once paused, Blanky releases the audio device so Windows can go to sleep." },
+    ]}
+    image="timer-dark.png"
+    alt="The sleep timer panel showing 44:59 remaining, pausing at a set time."
+  />
+
+  <Feature
+    eyebrow="Presets"
+    title="Save your mixes<br />for sleep and work."
+    lede="Keep separate presets for falling asleep, winding down or tuning out a noisy room while you focus. Star your favorites and switch with Ctrl+→."
+    items={[
+      { icon: "weather_rain", title: "Heavy Rain Sleep", text: "Rain + Brown Noise + Fan" },
+      { icon: "fire", title: "Cozy Night In", text: "Fireplace + Wind + Warm Piano" },
+      { icon: "water", title: "Ocean Focus", text: "Green Noise + Waves + Lo-Fi Beats" },
+    ]}
+    image="preset-light.png"
+    alt="Blanky in light mode with the Ocean Focus preset in a teal accent, and presets and favorites in the sidebar."
+  />
+
+  <Feature
+    reverse
+    eyebrow="Customize"
+    title="Make it<br />unmistakably yours."
+    lede="Give each preset its own accent color so your mixes look the part, day or night. Blanky follows your Windows theme and accent color by default."
+    items={[
+      { icon: "sparkle", title: "Accent colors", text: "Twelve colors, or your Windows accent, for the whole app or per preset (right-click a preset)." },
+      { icon: "weather_sunny", title: "Light and dark", text: "Blanky follows your Windows theme, with Mica behind the mixer." },
+    ]}
+    image="accent-dark.png"
+    alt="The accent color picker open over the mixer, with a purple accent selected."
+  />
+
+  <!-- Family -->
+  <section class="family">
+    <div class="container">
+      <p class="eyebrow">One family</p>
+      <h2 class="display section-title">Your mixes, on every computer.</h2>
+      <p class="lede narrow">
+        Blanky is the Windows member of a small family of free, open-source sound mixers. Presets use the same file layout
+        as Blankie, so a mix made on a Mac opens on Windows.
+      </p>
+      <div class="cards">
+        <a class="glass card" href={site.repo}>
+          <span class="platform">Windows</span>
+          <strong>Blanky</strong>
+          <span>Native WinUI app for Windows 10 and 11. This one.</span>
+        </a>
+        <a class="glass card" href={site.blankieSite}>
+          <span class="platform">Mac, iPhone, iPad</span>
+          <strong>Blankie</strong>
+          <span>The Apple app that inspired Blanky's design and features.</span>
+        </a>
+        <a class="glass card" href={site.blanket}>
+          <span class="platform">Linux</span>
+          <strong>Blanket</strong>
+          <span>The GNOME app where it all started.</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Free forever -->
+  <section class="free" id="download">
+    <div class="container">
+      <h2 class="display section-title center-text">Don't rent your relaxation.</h2>
+      <p class="lede center-text narrow centered">
+        Other sleep and focus apps lock sounds and features behind paywalls. Blanky gives you everything free, forever.
+      </p>
+      <div class="compare">
+        <div class="glass plan ours">
+          <div class="plan-head">
+            <div>
+              <h3>Blanky <span class="badge">Open source</span></h3>
+              <p>Costs nothing, hides nothing. Get everything, every time.</p>
+            </div>
+            <div class="price"><strong>$0</strong><span>Forever</span></div>
+          </div>
+          <ul class="checks">
+            {
+              included.map((item) => (
+                <li>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>
+                  <div>
+                    <strong>{item.title}</strong>
+                    <span>{item.text}</span>
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
+          <div class="plan-foot">
+            <a class="button primary large" href={site.releases}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 19h16"></path></svg>
+              Download for Windows
+            </a>
+            <p>Free download from GitHub Releases. <a href={url("faq/#install")}>How to install</a></p>
+          </div>
+        </div>
+        <div class="glass plan theirs">
+          <div class="plan-head">
+            <div>
+              <h3>Other apps</h3>
+              <p>Free to try, then worse until you buy.</p>
+            </div>
+            <div class="price"><strong>$20–$120</strong><span class="bad">Per year</span></div>
+          </div>
+          <ul class="crosses">
+            {
+              others.map((text) => (
+                <li>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17" /></svg>
+                  {text}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+
+      <div class="support">
+        <p><strong>Enjoying Blanky and want to help? Here are some ways you can support it:</strong></p>
+        <div class="support-links">
+          <a class="button secondary" href={site.buyMeACoffee}>
+            <Icon name="drink_coffee" size={18} /> Buy me a coffee
+          </a>
+          <a class="button secondary" href={site.repo}>
+            <Icon name="star" size={18} /> Star on GitHub
+          </a>
+          <a class="button secondary" href={site.issues}>
+            <Icon name="heart" size={18} /> Suggest a feature
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    position: relative;
+    padding: 96px 0 72px;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: -20% -10% auto;
+    height: 900px;
+    background:
+      radial-gradient(40% 50% at 30% 30%, rgba(68, 82, 246, 0.28), transparent 70%),
+      radial-gradient(35% 45% at 75% 20%, rgba(255, 197, 61, 0.12), transparent 70%);
+    pointer-events: none;
+  }
+  .center {
+    position: relative;
+    text-align: center;
+  }
+  .headline {
+    font-size: clamp(52px, 9vw, 88px);
+  }
+  .tagline {
+    margin-top: 24px;
+  }
+  .hero-shot {
+    max-width: 960px;
+    margin: 56px auto 0;
+  }
+  .cta {
+    margin-top: 48px;
+    display: grid;
+    justify-items: center;
+    gap: 16px;
+  }
+  .free-chip {
+    margin: 4px 0 0;
+    background: #0a6cff;
+    color: white;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-size: 16px;
+  }
+  .requirements {
+    margin: 0;
+    color: var(--fg-3);
+    font-size: 14px;
+  }
+
+  .section-title {
+    font-size: clamp(34px, 5vw, 52px);
+    margin-bottom: 18px;
+  }
+  .narrow {
+    max-width: 660px;
+  }
+  .centered {
+    margin-inline: auto;
+  }
+  .center-text {
+    text-align: center;
+  }
+
+  .family {
+    padding: 96px 0;
+    border-top: 1px solid var(--hair-soft);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+  }
+  .card {
+    display: grid;
+    gap: 6px;
+    padding: 24px;
+    text-decoration: none;
+  }
+  .card strong {
+    font-size: 22px;
+  }
+  .card span:last-child {
+    color: var(--fg-2);
+    font-size: 15px;
+  }
+  .platform {
+    color: var(--accent-ink);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .free {
+    padding: 112px 0 96px;
+    border-top: 1px solid var(--hair-soft);
+  }
+  .compare {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 24px;
+    margin-top: 56px;
+  }
+  .plan {
+    padding: 36px;
+    display: flex;
+    flex-direction: column;
+  }
+  .ours {
+    background: linear-gradient(180deg, rgba(68, 82, 246, 0.16), rgba(255, 255, 255, 0.03));
+  }
+  .plan-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .plan-head h3 {
+    margin: 0;
+    font-size: 30px;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .plan-head p {
+    margin: 8px 0 0;
+    color: var(--fg-2);
+    font-size: 15px;
+  }
+  .badge {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid var(--accent-ink);
+    color: var(--accent-ink);
+    border-radius: 999px;
+    padding: 2px 10px;
+  }
+  .price {
+    text-align: right;
+  }
+  .price strong {
+    display: block;
+    font-size: 36px;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+  }
+  .price span {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent-ink);
+  }
+  .price .bad {
+    color: var(--bad);
+  }
+  .checks,
+  .crosses {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 0;
+  }
+  .checks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 24px;
+  }
+  .checks li {
+    display: flex;
+    gap: 12px;
+  }
+  .checks svg {
+    flex: none;
+    color: var(--good);
+    background: rgba(52, 211, 153, 0.12);
+    border-radius: 50%;
+    padding: 3px;
+    width: 24px;
+    height: 24px;
+  }
+  .checks strong {
+    display: block;
+    font-size: 16px;
+  }
+  .checks span {
+    display: block;
+    color: var(--fg-2);
+    font-size: 14px;
+  }
+  .crosses {
+    display: grid;
+    gap: 16px;
+  }
+  .crosses li {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    color: var(--fg-2);
+    font-size: 16px;
+  }
+  .crosses svg {
+    flex: none;
+    color: var(--bad);
+    background: rgba(248, 113, 113, 0.12);
+    border-radius: 50%;
+    padding: 3px;
+    width: 24px;
+    height: 24px;
+  }
+  .plan-foot {
+    margin-top: auto;
+    padding-top: 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px 24px;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--hair);
+    margin-top: 32px;
+  }
+  .plan-foot p {
+    margin: 0;
+    color: var(--fg-3);
+    font-size: 14px;
+  }
+  .plan-foot a:not(.button) {
+    color: var(--accent-ink);
+  }
+
+  .support {
+    margin-top: 72px;
+    text-align: center;
+  }
+  .support p {
+    margin: 0 0 16px;
+    font-size: 15px;
+  }
+  .support-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  @media (max-width: 900px) {
+    .compare {
+      grid-template-columns: 1fr;
+    }
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .hero {
+      padding-top: 64px;
+    }
+    .plan {
+      padding: 24px;
+    }
+    .checks {
+      grid-template-columns: 1fr;
+    }
+    .plan-head {
+      flex-direction: column;
+    }
+    .price {
+      text-align: left;
+    }
+  }
+</style>

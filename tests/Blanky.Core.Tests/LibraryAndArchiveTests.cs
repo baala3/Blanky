@@ -149,6 +149,28 @@ public sealed class LibraryAndArchiveTests : IDisposable
     }
 
     [Fact]
+    public void Settings_missing_from_the_file_keep_their_defaults()
+    {
+        // An older version (or a hand edit) may write only some fields.
+        File.WriteAllText(_app.Paths.SettingsFile, """{ "autoPlayOnLaunch": true }""");
+
+        var settings = _app.Store.LoadSettings();
+
+        Assert.Equal(new AppSettings() with { AutoPlayOnLaunch = true }, settings);
+    }
+
+    [Fact]
+    public void Presets_missing_optional_fields_keep_their_defaults()
+    {
+        File.WriteAllText(_app.Paths.PresetsFile, """[{ "id": "5c2b6a0e-1c1e-4e0f-9e59-3d1e8c3b1f11", "name": "Bare" }]""");
+
+        var preset = Assert.Single(_app.Store.LoadPresets());
+
+        Assert.Empty(preset.SoundStates);
+        Assert.False(preset.IsDefault);
+    }
+
+    [Fact]
     public void A_corrupt_settings_file_is_kept_aside_and_defaults_are_used()
     {
         File.WriteAllText(_app.Paths.SettingsFile, "{ not json");

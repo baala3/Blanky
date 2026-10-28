@@ -37,6 +37,9 @@ public sealed partial class SidebarRow : ObservableObject
 
     public bool IsPreset => Item is PlayableItem.PresetItem;
 
+    /// <summary>The all-sounds row shows the app icon, like Blankie's.</summary>
+    public bool IsAppRow => Item is PlayableItem.AllSounds;
+
     public bool IsSound => Item is PlayableItem.SingleSound;
 
     [ObservableProperty]

@@ -180,47 +180,47 @@ public sealed class PresetArchive(AudioManager audio, Storage.AppPaths paths)
 
 internal sealed record ArchiveManifest
 {
-    public string Version { get; init; } = "1.0";
-    public string BlankieVersion { get; init; } = "2.0.0";
-    public string? BlankyVersion { get; init; }
-    public double CreatedDate { get; init; }
-    public ArchiveCompatibility Compatibility { get; init; } = new();
+    public string Version { get; set; } = "1.0";
+    public string BlankieVersion { get; set; } = "2.0.0";
+    public string? BlankyVersion { get; set; }
+    public double CreatedDate { get; set; }
+    public ArchiveCompatibility Compatibility { get; set; } = new();
 }
 
 internal sealed record ArchiveCompatibility
 {
-    public string MinimumBlankieVersion { get; init; } = "2.0.0";
-    public IReadOnlyList<string> RequiredFeatures { get; init; } = [];
+    public string MinimumBlankieVersion { get; set; } = "2.0.0";
+    public IReadOnlyList<string> RequiredFeatures { get; set; } = [];
 }
 
 internal sealed record SoundsManifest
 {
-    public IReadOnlyList<CustomSoundMetadata> CustomSounds { get; init; } = [];
-    public IReadOnlyList<JsonElement> BuiltInCustomizations { get; init; } = [];
+    public IReadOnlyList<CustomSoundMetadata> CustomSounds { get; set; } = [];
+    public IReadOnlyList<JsonElement> BuiltInCustomizations { get; set; } = [];
 }
 
 internal sealed record CustomSoundMetadata
 {
-    public Guid Id { get; init; }
-    public string FileName { get; init; } = "";
-    public string OriginalFileName { get; init; } = "";
-    public string Title { get; init; } = "";
-    public string? SystemIconName { get; init; }
+    public Guid Id { get; set; }
+    public string FileName { get; set; } = "";
+    public string OriginalFileName { get; set; } = "";
+    public string Title { get; set; } = "";
+    public string? SystemIconName { get; set; }
 
     /// <summary>Blanky's own icon key, so a Windows-to-Windows trip keeps the exact icon. Ignored by Blankie.</summary>
-    public string? BlankyIcon { get; init; }
+    public string? BlankyIcon { get; set; }
 
-    public double? LufsValue { get; init; }
-    public string? Sha256Hash { get; init; }
-    public ArchiveCredits? Credits { get; init; }
+    public double? LufsValue { get; set; }
+    public string? Sha256Hash { get; set; }
+    public ArchiveCredits? Credits { get; set; }
 }
 
 internal sealed record ArchiveCredits
 {
-    public string? SoundName { get; init; }
-    public string? Author { get; init; }
-    public string? SourceUrl { get; init; }
-    public string? License { get; init; }
+    public string? SoundName { get; set; }
+    public string? Author { get; set; }
+    public string? SourceUrl { get; set; }
+    public string? License { get; set; }
 }
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]

@@ -1,0 +1,260 @@
+/*
+  Blanky's site follows the Blankie site's visual language (midnight navy,
+  yellow-to-blue display gradient, frosted cards, hairline borders), adapted
+  for Windows. Blankie's site source is MIT licensed.
+*/
+:root {
+  --navy-deep: #050929;
+  --midnight: #01062b;
+  --lift: #0b1138;
+  --yellow: #ffd300;
+  --blue: #4452f6;
+  --accent: #4c8dff;
+  --accent-ink: #bcd4ff;
+  --fg-1: #f4f5fa;
+  --fg-2: #aeb2cc;
+  --fg-3: #8b90b3;
+  --glass: rgba(255, 255, 255, 0.045);
+  --glass-2: rgba(255, 255, 255, 0.07);
+  --hair: rgba(255, 255, 255, 0.09);
+  --hair-soft: rgba(255, 255, 255, 0.055);
+  --good: #34d399;
+  --bad: #f87171;
+  --radius: 18px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --content: 1112px;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--midnight);
+  color: var(--fg-1);
+  font-family: "Segoe UI Variable Text", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.47;
+  letter-spacing: -0.01em;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--accent);
+  color: white;
+}
+
+.container {
+  width: min(var(--content), 100% - 32px);
+  margin-inline: auto;
+}
+
+/* ---- Type ---- */
+
+.display {
+  font-family: "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  margin: 0;
+}
+
+.grad-text {
+  background: linear-gradient(176deg, var(--yellow) 2%, #ffc53d 26%, #8e7bf0 64%, var(--blue) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.eyebrow {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  margin: 0 0 12px;
+}
+
+.lede {
+  color: var(--fg-2);
+  font-size: 19px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ---- Surfaces ---- */
+
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--hair);
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius);
+  transition:
+    transform 0.25s var(--ease),
+    border-color 0.25s,
+    background 0.25s;
+}
+
+a.glass:hover,
+.glass.lift:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass {
+    transition: none;
+  }
+}
+
+/* ---- Buttons ---- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background 0.2s,
+    transform 0.2s var(--ease);
+}
+
+.button.primary {
+  background: #0a6cff;
+  color: white;
+}
+
+.button.primary:hover {
+  background: #2f82ff;
+}
+
+.button.secondary {
+  background: var(--glass);
+  border: 1px solid var(--hair);
+  color: var(--fg-1);
+}
+
+.button.secondary:hover {
+  background: var(--glass-2);
+}
+
+.button.large {
+  min-height: 56px;
+  padding: 0 28px;
+  font-size: 18px;
+  border-radius: 16px;
+}
+
+.button svg {
+  flex: none;
+}
+
+/* ---- Prose pages (FAQ, privacy, credits) ---- */
+
+.page {
+  padding: 72px 0 96px;
+}
+
+.page-header {
+  margin-bottom: 40px;
+}
+
+.page-header h1 {
+  font-size: clamp(36px, 6vw, 56px);
+}
+
+.page-header p {
+  margin-top: 16px;
+}
+
+.prose {
+  color: var(--fg-2);
+  max-width: 760px;
+}
+
+.prose h2 {
+  color: var(--fg-1);
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  margin: 48px 0 12px;
+}
+
+.prose h3 {
+  color: var(--fg-1);
+  font-size: 19px;
+  margin: 28px 0 8px;
+}
+
+.prose p,
+.prose li {
+  line-height: 1.65;
+}
+
+.prose a {
+  color: var(--accent-ink);
+}
+
+.prose a:hover {
+  color: white;
+}
+
+.prose code {
+  font-family: "Cascadia Mono", Consolas, ui-monospace, monospace;
+  font-size: 0.9em;
+  background: var(--glass-2);
+  border: 1px solid var(--hair-soft);
+  border-radius: 6px;
+  padding: 1px 6px;
+  color: var(--fg-1);
+}
+
+.prose kbd {
+  font-family: inherit;
+  font-size: 0.85em;
+  border: 1px solid var(--hair);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  padding: 1px 6px;
+  color: var(--fg-1);
+}

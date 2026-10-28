@@ -1,0 +1,48 @@
+---
+import { url } from "../site";
+
+interface Props {
+  src: string;
+  alt: string;
+  eager?: boolean;
+}
+
+const { src, alt, eager = false } = Astro.props;
+---
+
+<figure class="shot">
+  <img
+    src={url(`screenshots/${src}`)}
+    alt={alt}
+    width="1226"
+    height="813"
+    loading={eager ? "eager" : "lazy"}
+    decoding="async"
+  />
+</figure>
+
+<style>
+  .shot {
+    position: relative;
+    margin: 0;
+  }
+  /* Soft accent glow behind the window, like the Blankie site's device art. */
+  .shot::before {
+    content: "";
+    position: absolute;
+    inset: 8% 6%;
+    background: radial-gradient(closest-side, rgba(76, 141, 255, 0.35), transparent);
+    filter: blur(40px);
+    z-index: 0;
+  }
+  img {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+      0 30px 80px rgba(0, 0, 0, 0.55),
+      0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+</style>

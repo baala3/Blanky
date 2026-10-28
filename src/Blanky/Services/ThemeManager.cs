@@ -20,7 +20,14 @@ internal sealed class ThemeManager
 
     public ThemeManager(ResourceDictionary appResources)
     {
-        _themeDictionaries = appResources.MergedDictionaries.First(d => d.ThemeDictionaries.ContainsKey("Dark"));
+        // Found by its source file: in Release builds the merged dictionary's
+        // ThemeDictionaries aren't populated until first used, so matching on
+        // contents fails there.
+        _themeDictionaries = appResources.MergedDictionaries.FirstOrDefault(
+                d => d.Source?.OriginalString.EndsWith("Themes/Theme.xaml", StringComparison.OrdinalIgnoreCase) == true)
+            ?? throw new InvalidOperationException(
+                "Themes/Theme.xaml isn't merged into the app resources. Found: "
+                + string.Join(", ", appResources.MergedDictionaries.Select(d => d.Source?.OriginalString ?? d.GetType().Name)));
 
         // Follow the Windows accent live when no named accent is chosen.
         _uiSettings.ColorValuesChanged += (_, _) => Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread()?.TryEnqueue(() => ApplyAccent(_accentName));

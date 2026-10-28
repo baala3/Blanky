@@ -1,0 +1,134 @@
+---
+import { site, url } from "../site";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="top">
+      <div class="about">
+        <a class="brand" href={url()}>
+          <img src={url("logo.png")} alt="" width="28" height="28" />
+          <span>Blanky</span>
+        </a>
+        <p>Free and open-source ambient sound mixer for Windows 10 and 11.</p>
+      </div>
+      <div class="columns">
+        <div>
+          <h2>Open source</h2>
+          <ul>
+            <li><a href={site.repo}>GitHub Repo</a></li>
+            <li><a href={site.contributing}>Contributing to Blanky</a></li>
+            <li><a href={site.issues}>Report a bug</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Support the project</h2>
+          <ul>
+            <li><a href={site.buyMeACoffee}>Buy Me a Coffee</a></li>
+            <li><a href={site.sponsors}>GitHub Sponsors</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="bottom">
+      <p>
+        {`© ${year} ${site.author} and contributors`} · <a href={url("privacy/")}>Privacy Policy</a>
+      </p>
+      <p class="inspired">
+        Inspired by <a href={site.blankie}>Blankie</a> for Mac and <a href={site.blanket}>Blanket</a> for Linux
+      </p>
+    </div>
+    <p class="legal">
+      Blanky is an independent project and is not affiliated with Blankie or Blanket. Windows is a trademark of
+      Microsoft Corporation. Sounds are used under their open licenses; see <a href={url("credits/")}>credits</a>.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--hair-soft);
+    padding: 64px 0 48px;
+    background: var(--navy-deep);
+    font-size: 15px;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    gap: 48px;
+    flex-wrap: wrap;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 19px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .brand img {
+    border-radius: 7px;
+  }
+  .about p {
+    color: var(--fg-2);
+    max-width: 320px;
+    margin: 14px 0 0;
+  }
+  .columns {
+    display: flex;
+    gap: 64px;
+    flex-wrap: wrap;
+  }
+  h2 {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    margin: 0 0 14px;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  ul a,
+  .bottom a,
+  .legal a {
+    color: var(--fg-2);
+    text-decoration: none;
+  }
+  ul a:hover,
+  .bottom a:hover,
+  .legal a:hover {
+    color: var(--fg-1);
+  }
+  .bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px 24px;
+    flex-wrap: wrap;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--hair-soft);
+    color: var(--fg-3);
+  }
+  .bottom p {
+    margin: 0;
+  }
+  .bottom a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .legal {
+    color: var(--fg-3);
+    font-size: 13px;
+    margin: 20px 0 0;
+  }
+  .legal a {
+    text-decoration: underline;
+  }
+</style>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#16236e"/>
+      <stop offset="1" stop-color="#030826"/>
+    </linearGradient>
+    <linearGradient id="wave" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#ffd300"/>
+      <stop offset="0.45" stop-color="#ffb347"/>
+      <stop offset="0.75" stop-color="#8e7bf0"/>
+      <stop offset="1" stop-color="#4c8dff"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.35" r="0.6">
+      <stop offset="0" stop-color="#4c8dff" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#4c8dff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="232" fill="url(#bg)"/>
+  <rect width="1024" height="1024" rx="232" fill="url(#glow)"/>
+  <g fill="none" stroke="url(#wave)" stroke-linecap="round" stroke-width="78">
+    <path d="M232 372 C 322 300, 412 300, 512 372 S 702 444, 792 372"/>
+    <path d="M232 532 C 322 460, 412 460, 512 532 S 702 604, 792 532"/>
+    <path d="M232 692 C 322 620, 412 620, 512 692 S 702 764, 792 692"/>
+  </g>
+</svg>

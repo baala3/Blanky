@@ -12,9 +12,9 @@ namespace Blanky.Core.Playback;
 /// </summary>
 public sealed class SoundLibrary
 {
-    /// <summary>Formats Windows Media Foundation decodes out of the box.</summary>
+    /// <summary>Formats Windows Media Foundation decodes (Ogg and Opus need the free Web Media Extensions).</summary>
     public static readonly IReadOnlyList<string> ImportExtensions =
-        [".m4a", ".mp3", ".wav", ".flac", ".aac", ".wma", ".aif", ".aiff", ".mp4", ".caf", ".ogg", ".opus"];
+        [".m4a", ".mp3", ".wav", ".flac", ".aac", ".wma", ".mp4", ".ogg", ".opus"];
 
     /// <summary>Longest stretch analysed for loudness. Longer files are still imported whole.</summary>
     private static readonly TimeSpan AnalysisLimit = TimeSpan.FromMinutes(20);

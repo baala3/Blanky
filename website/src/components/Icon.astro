@@ -1,0 +1,29 @@
+---
+// Draws an icon from the app's own icon set (src/Blanky/Assets/icons.json), so
+// the site and the app share one visual language.
+import iconData from "../../../src/Blanky/Assets/icons.json";
+
+interface Props {
+  name: string;
+  filled?: boolean;
+  size?: number;
+  class?: string;
+}
+
+const { name, filled = false, size = 20, class: className } = Astro.props;
+const icons = iconData.icons as Record<string, { viewBox: string; regular: string; filled: string }>;
+const icon = icons[name];
+if (!icon) throw new Error(`Unknown icon: ${name}`);
+---
+
+<svg
+  class={className}
+  width={size}
+  height={size}
+  viewBox={icon.viewBox}
+  fill="currentColor"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d={filled ? icon.filled : icon.regular}></path>
+</svg>

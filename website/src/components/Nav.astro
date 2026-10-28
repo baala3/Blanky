@@ -1,0 +1,91 @@
+---
+import { site, url } from "../site";
+
+const links = [
+  { href: url("faq/"), label: "FAQ" },
+  { href: url("credits/"), label: "Credits" },
+  { href: site.repo, label: "GitHub" },
+];
+const current = Astro.url.pathname;
+---
+
+<header class="nav">
+  <div class="container inner">
+    <a class="brand" href={url()} aria-label="Blanky home">
+      <img src={url("logo.png")} alt="" width="36" height="36" />
+      <span>Blanky</span>
+    </a>
+    <nav aria-label="Main">
+      {
+        links.map((link) => (
+          <a class="link" href={link.href} aria-current={current === link.href ? "page" : undefined}>
+            {link.label}
+          </a>
+        ))
+      }
+      <a class="button primary download" href={url("#download")}>Download</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(1, 6, 43, 0.72);
+    backdrop-filter: saturate(160%) blur(18px);
+    -webkit-backdrop-filter: saturate(160%) blur(18px);
+    border-bottom: 1px solid var(--hair-soft);
+  }
+  .inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+    gap: 16px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+  .brand img {
+    border-radius: 9px;
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .link {
+    padding: 8px 14px;
+    border-radius: 999px;
+    color: var(--fg-2);
+    text-decoration: none;
+    font-size: 15px;
+  }
+  .link:hover,
+  .link[aria-current="page"] {
+    color: var(--fg-1);
+    background: var(--glass);
+  }
+  .download {
+    min-height: 38px;
+    font-size: 15px;
+    margin-left: 6px;
+  }
+  @media (max-width: 560px) {
+    .link {
+      padding: 8px 8px;
+      font-size: 14px;
+    }
+    .download {
+      display: none;
+    }
+  }
+</style>

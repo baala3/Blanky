@@ -79,6 +79,7 @@ public sealed partial class MainWindow : Window
     private void ConfigureWindow()
     {
         ExtendsContentIntoTitleBar = true;
+        AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets", "Blanky.ico"));
         AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
         AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
         AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
@@ -231,8 +232,27 @@ public sealed partial class MainWindow : Window
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
         ScheduleDragRegionUpdate();
+
+        // Otherwise WinUI focuses the first button (+) and draws a focus ring on
+        // it at launch. Programmatic focus moves keyboard focus without the ring.
+        if (!PlayButton.Focus(FocusState.Programmatic))
+        {
+            VolumeSlider.Focus(FocusState.Programmatic);
+        }
         if (App.Current.CapturePath is { } path)
         {
+            // Scripted screenshots (scripts/screenshots.sh) can open a panel first.
+            if (App.Current.ArgValue("--demo-timer") is { } minutes)
+            {
+                Audio.SleepTimer.Start(TimeSpan.FromMinutes(double.Parse(minutes, System.Globalization.CultureInfo.InvariantCulture)));
+                TimerPanel.Refresh();
+                TimerFlyout.ShowAt(TimerButton);
+            }
+            else if (App.Current.ArgValue("--open") == "accent")
+            {
+                AccentFlyout.ShowAt(AccentButton);
+            }
+
             // Let fades, progress rings and Mica settle before the screenshot.
             await Task.Delay(1500);
             await WindowCapture.SaveAsync(this, path);
@@ -365,21 +385,54 @@ public sealed partial class MainWindow : Window
             menu.Items.Add(item);
         }
 
-        Add(row.IsStarred ? "Remove from Favorites" : "Add to Favorites", row.IsStarred ? "" : "", () => Audio.SetStarred(row.Item, !row.IsStarred));
+        Add(row.IsStarred ? "Remove from Favorites" : "Add to Favorites", row.IsStarred ? "\uE735" : "\uE734", () => Audio.SetStarred(row.Item, !row.IsStarred));
         if (row.Item is PlayableItem.PresetItem { Id: var id } && Audio.Presets.Find(id) is { } preset)
         {
-            Add("Rename Preset…", "", async () => await RenamePresetAsync(preset));
-            Add("Export Preset…", "", async () => await ExportPresetAsync(preset));
+            Add("Rename Preset…", "\uE8AC", async () => await RenamePresetAsync(preset));
+            menu.Items.Add(AccentSubmenu(preset));
+            Add("Export Preset…", "\uEDE1", async () => await ExportPresetAsync(preset));
             menu.Items.Add(new MenuFlyoutSeparator());
-            Add("Delete Preset…", "", async () => await DeletePresetAsync(preset));
+            Add("Delete Preset…", "\uE74D", async () => await DeletePresetAsync(preset));
         }
         else if (row.Item is PlayableItem.SingleSound { FileName: var file } && Audio.Library.Find(file) is { IsCustom: true } sound)
         {
             menu.Items.Add(new MenuFlyoutSeparator());
-            Add("Delete Sound…", "", async () => await DeleteSoundAsync(sound));
+            Add("Delete Sound…", "\uE74D", async () => await DeleteSoundAsync(sound));
         }
         menu.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
         e.Handled = true;
+    }
+
+    /// <summary>"Accent Color" submenu: a preset can override the app accent while it's active.</summary>
+    private MenuFlyoutSubItem AccentSubmenu(Core.Model.Preset preset)
+    {
+        var submenu = new MenuFlyoutSubItem { Text = "Accent Color", Icon = new FontIcon { Glyph = "\uE790" } };
+        void Add(string? name, string label, Color? swatch)
+        {
+            var item = new ToggleMenuFlyoutItem { Text = label, IsChecked = preset.AccentColorName == name };
+            if (swatch is { } color)
+            {
+                item.Icon = new FontIcon { Glyph = "\uEA3B", Foreground = new SolidColorBrush(color) };
+            }
+            item.Click += (_, _) =>
+            {
+                if (Audio.Presets.Find(preset.Id) is { } current)
+                {
+                    Audio.UpdatePreset(current with { AccentColorName = name });
+                }
+            };
+            submenu.Items.Add(item);
+        }
+
+        Add(null, "Use App Accent", null);
+        submenu.Items.Add(new MenuFlyoutSeparator());
+        bool dark = Root.ActualTheme == ElementTheme.Dark;
+        foreach (var accent in Core.Model.AccentColors.All)
+        {
+            var rgb = dark ? accent.Dark : accent.Light;
+            Add(accent.Name, accent.DisplayName, Color.FromArgb(255, rgb.R, rgb.G, rgb.B));
+        }
+        return submenu;
     }
 
     // ---- Presets and import -------------------------------------------------
