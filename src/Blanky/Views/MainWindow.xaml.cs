@@ -257,6 +257,10 @@ public sealed partial class MainWindow : Window
             {
                 AccentFlyout.ShowAt(AccentButton);
             }
+            else if (App.Current.ArgValue("--open") == "new-preset")
+            {
+                OnNewPreset(this, new RoutedEventArgs());
+            }
 
             // Let fades, progress rings and Mica settle before the screenshot.
             await Task.Delay(1500);
