@@ -36,6 +36,12 @@ Invoke-Blanky "render" @("--demo", "rain,waves,fireplace", "--capture", "`"$shot
 if (-not (Test-Path $shot) -or (Get-Item $shot).Length -lt 10KB) { throw "render: no screenshot" }
 Write-Host "Screenshot: $((Get-Item $shot).Length / 1KB) KB"
 
+# The New Preset dialog renders. Native AOT can't read managed objects by
+# reflection, so XAML that tries crashes the app, but only once it's on screen.
+$dialogShot = Join-Path ([IO.Path]::GetTempPath()) "blanky-smoke-dialog-$PID.png"
+Invoke-Blanky "dialog" @("--demo", "rain,waves", "--open", "new-preset", "--capture", "`"$dialogShot`"") | Out-Null
+if (-not (Test-Path $dialogShot) -or (Get-Item $dialogShot).Length -lt 10KB) { throw "dialog: no screenshot" }
+
 # Audio decodes and plays for a few seconds, then the app closes cleanly.
 Invoke-Blanky "play" @("--demo", "rain,brown-noise,lofi", "--exit-after", "6") | Out-Null
 Write-Host "Smoke test passed"

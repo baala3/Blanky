@@ -117,6 +117,12 @@ jobs:
       - name: Install, smoke test and uninstall
         shell: pwsh
         run: |
+          # Keep a full dump of any crash, for the next step to explain.
+          $key = "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\Blanky.exe"
+          New-Item -Force $key | Out-Null
+          Set-ItemProperty $key DumpFolder (Join-Path $env:RUNNER_TEMP dumps) -Type ExpandString
+          Set-ItemProperty $key DumpType 2 -Type DWord
+
           $root = Join-Path $env:LOCALAPPDATA $env:PACK_ID
           $setup = Start-Process "upload/Blanky-Setup-${{ matrix.arch }}.exe" -ArgumentList "--silent" -PassThru -Wait
           if ($setup.ExitCode -ne 0) { throw "Setup failed with exit code $($setup.ExitCode)" }
@@ -128,6 +134,29 @@ jobs:
           if ($uninstall.ExitCode -ne 0) { throw "Uninstall failed with exit code $($uninstall.ExitCode)" }
           Start-Sleep -Seconds 5
           if (Test-Path "$root/current") { throw "Uninstall left the app behind" }
+
+      - name: Explain crashes
+        if: failure()
+        shell: pwsh
+        run: |
+          $dumps = @(Get-ChildItem (Join-Path $env:RUNNER_TEMP dumps) -Filter *.dmp -ErrorAction SilentlyContinue)
+          if (-not $dumps) { "No crash dumps"; exit 0 }
+          $cdb = "${env:ProgramFiles(x86)}\Windows Kits\10\Debuggers\${{ matrix.arch }}\cdb.exe"
+          if (-not (Test-Path $cdb)) { "::warning::cdb isn't installed; the dumps are in the crash-dumps artifact"; exit 0 }
+          # Stowed WinRT errors (exit code 0xC000027B) carry the stack that raised them; !analyze shows it.
+          $symbols = "$PWD\symbols;srv*$env:RUNNER_TEMP\symcache*https://msdl.microsoft.com/download/symbols"
+          foreach ($dump in $dumps) {
+            "::group::$($dump.Name)"
+            & $cdb -z $dump.FullName -y $symbols -c "!analyze -v; .ecxr; kn 60; q"
+            "::endgroup::"
+          }
+
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: crash-dumps-${{ matrix.rid }}
+          path: ${{ runner.temp }}/dumps/
+          if-no-files-found: ignore
 
       - uses: actions/upload-artifact@v7
         with:
