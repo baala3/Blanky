@@ -456,13 +456,15 @@ public sealed partial class MainWindow : Window
     private async void OnNewPreset(object sender, RoutedEventArgs e)
     {
         var name = new TextBox { Header = "Name", PlaceholderText = "My Preset" };
-        var sounds = new ListView
+        var sounds = new ListView { SelectionMode = ListViewSelectionMode.Multiple, Height = 300 };
+        // Native AOT notes: the items are elements because DisplayMemberPath reads
+        // SoundItem.Title by reflection, and the label is SemiBold rather than looking
+        // up BodyStrongTextBlockStyle, which comes back as a DependencyObject that
+        // can't be cast to Style.
+        foreach (var sound in Audio.Library.Sounds.Where(s => !s.IsHidden))
         {
-            SelectionMode = ListViewSelectionMode.Multiple,
-            ItemsSource = Audio.Library.Sounds.Where(s => !s.IsHidden).ToList(),
-            DisplayMemberPath = nameof(SoundItem.Title),
-            Height = 300,
-        };
+            sounds.Items.Add(new ListViewItem { Content = sound.Title, Tag = sound.FileName });
+        }
         var dialog = new ContentDialog
         {
             XamlRoot = Root.XamlRoot,
@@ -474,21 +476,22 @@ public sealed partial class MainWindow : Window
             {
                 Spacing = 12,
                 Width = 360,
-                Children = { name, new TextBlock { Text = "Sounds", Style = (Style)Application.Current.Resources["BodyStrongTextBlockStyle"] }, sounds },
+                Children = { name, new TextBlock { Text = "Sounds", FontWeight = Microsoft.UI.Text.FontWeights.SemiBold }, sounds },
             },
         };
         sounds.Loaded += (_, _) =>
         {
-            foreach (var sound in Audio.VisibleSounds.Where(s => s.IsSelected))
+            var selected = Audio.VisibleSounds.Where(s => s.IsSelected).Select(s => s.FileName).ToHashSet();
+            foreach (var item in sounds.Items.OfType<ListViewItem>().Where(i => selected.Contains((string)i.Tag)))
             {
-                sounds.SelectedItems.Add(sound);
+                sounds.SelectedItems.Add(item);
             }
         };
         if (await dialog.ShowAsync() != ContentDialogResult.Primary)
         {
             return;
         }
-        var chosen = sounds.SelectedItems.OfType<SoundItem>().Select(s => s.FileName).ToList();
+        var chosen = sounds.SelectedItems.OfType<ListViewItem>().Select(i => (string)i.Tag).ToList();
         if (chosen.Count == 0)
         {
             await ShowMessageAsync("No sounds chosen", "Pick at least one sound for the preset.");
