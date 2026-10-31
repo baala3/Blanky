@@ -34,7 +34,8 @@ const year = new Date().getFullYear();
     </div>
     <div class="bottom">
       <p>
-        {`© ${year} ${site.author} and contributors`} · <a href={url("privacy/")}>Privacy Policy</a>
+        {`© ${year} ${site.author} and contributors`} · <a href={url("privacy/")}>Privacy Policy</a> ·{" "}
+        <a href={url("code-signing/")}>Code signing policy</a>
       </p>
       <p class="inspired">
         Inspired by <a href={site.blankie}>Blankie</a> for Mac and <a href={site.blanket}>Blanket</a> for Linux
@@ -122,6 +123,7 @@ const year = new Date().getFullYear();
   .bottom a {
     text-decoration: underline;
     text-underline-offset: 3px;
+    white-space: nowrap;
   }
   .legal {
     color: var(--fg-3);
