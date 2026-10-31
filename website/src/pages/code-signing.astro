@@ -1,0 +1,38 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { site, url } from "../site";
+---
+
+<Layout title="Code signing policy" description="How Blanky's releases are built, signed and approved.">
+  <div class="container page">
+    <header class="page-header">
+      <h1 class="display">Code signing policy</h1>
+      <p class="lede">Free code signing provided by <a href="https://signpath.io">SignPath.io</a>, certificate by <a href="https://signpath.org">SignPath Foundation</a>.</p>
+    </header>
+    <div class="prose">
+      <h2>What gets signed</h2>
+      <p>
+        Every Blanky release is built from the source code in the <a href={site.repo}>public repository</a> by GitHub
+        Actions. Only the programs built from that source are signed: Blanky itself and its installers. Nothing is built
+        or signed on a personal computer.
+      </p>
+
+      <h2>Team roles</h2>
+      <ul>
+        <li><strong>Committers and reviewers:</strong> <a href="https://github.com/baala3">Bala</a></li>
+        <li><strong>Approvers:</strong> <a href="https://github.com/baala3">Bala</a></li>
+      </ul>
+      <p>
+        Changes from anyone else arrive as pull requests and are reviewed before they're merged. Each release is approved
+        by hand before it's signed.
+      </p>
+
+      <h2>Privacy</h2>
+      <p>
+        This program will not transfer any information to other networked systems unless specifically requested by the
+        user or the person installing or operating it. The one exception is the update check with GitHub, described in
+        the <a href={url("privacy/")}>privacy policy</a>.
+      </p>
+    </div>
+  </div>
+</Layout>
