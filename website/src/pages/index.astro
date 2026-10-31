@@ -170,6 +170,10 @@ const others = [
               Download for Windows
             </a>
             <p>Installs in seconds and keeps itself up to date. <a href={url("faq/#install")}>How to install</a></p>
+            <p class="signing">
+              Free code signing provided by SignPath.io, certificate by SignPath Foundation.{" "}
+              <a href={url("code-signing/")}>Code signing policy</a>
+            </p>
           </div>
         </div>
         <div class="glass plan theirs">
@@ -462,6 +466,13 @@ const others = [
   }
   .plan-foot a:not(.button) {
     color: var(--accent-ink);
+  }
+  .plan-foot .signing {
+    flex-basis: 100%;
+    font-size: 13px;
+  }
+  .plan-foot .signing a {
+    white-space: nowrap;
   }
 
   .support {
